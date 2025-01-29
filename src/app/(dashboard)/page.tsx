@@ -1,6 +1,3 @@
-
-import FilePickerDialog from '@/components/file-picker-dialog';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -8,9 +5,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import FilePickerDialog from './components/file-picker/file-picker-dialog';
+import FilePickerButton from './components/file-picker/file-picker-button';
+import { INTEGRATION_NAMES } from './config';
 
 export default async function Home() {
-
   return (
     <>
       <main className="container mx-auto flex flex-grow items-center justify-center px-4 py-8">
@@ -22,7 +21,11 @@ export default async function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full">Pick files from Google Drive</Button>
+            <FilePickerButton
+              integrationName={INTEGRATION_NAMES['google-drive']}
+            >
+              Pick files from Google Drive
+            </FilePickerButton>
           </CardContent>
         </Card>
       </main>

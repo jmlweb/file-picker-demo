@@ -64,11 +64,10 @@ async function loginAction(
       sameSite: 'strict',
     });
     redirectPath = '/';
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    // in a real app, we should log the error to a monitoring service
-    console.error('Login error:', error);
     return {
-      error: 'An unexpected error occurred. Please try again.',
+      error: DEFAULT_CREDENTIALS_ERROR,
     };
   } finally {
     if (redirectPath) {

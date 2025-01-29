@@ -28,7 +28,7 @@ export default async function AuthLayout({
               <AvatarImage src="https://github.com/shadcn.png" alt="User" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
-            <Button variant="outline" onClick={logoutAction}>
+            <Button size="sm" onClick={logoutAction}>
               <LogOut className="h-5 w-5" />
               <span className="text-sm font-medium">Log out</span>
             </Button>
