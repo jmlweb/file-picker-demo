@@ -1,5 +1,6 @@
 import {
   Card,
+  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -11,6 +12,10 @@ import { z } from 'zod';
 import LoginForm from './login-form';
 import type { LoginState } from './login-form';
 import authService from './authService';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+
+import { logoutAction } from '../logoutAction';
 
 const DEFAULT_CREDENTIALS_ERROR =
   'Invalid email or password. Please check your credentials and try again.';
@@ -68,12 +73,17 @@ async function loginAction(
   } finally {
     if (redirectPath) {
       redirect(redirectPath);
+    } else {
+      return { error: DEFAULT_CREDENTIALS_ERROR };
     }
   }
 }
 
-export default function Login() {
-  return (
+export default async function Login() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token');
+
+  return !token ? (
     <div className="flex min-h-screen items-center justify-center bg-foreground/5">
       <Card className="w-[350px] shadow-lg">
         <CardHeader className="space-y-1">
@@ -83,6 +93,23 @@ export default function Login() {
           </CardDescription>
         </CardHeader>
         <LoginForm loginAction={loginAction} />
+      </Card>
+    </div>
+  ) : (
+    <div className="flex min-h-screen flex-col items-center justify-center bg-foreground/5">
+      <Card className="w-[350px] shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">Already Logged In</CardTitle>
+          <CardDescription className="mt-2 text-sm text-muted-foreground">
+            You are already logged in to your account.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-2">
+          <Link href="/" legacyBehavior passHref>
+            <Button className="w-full">Go to Dashboard</Button>
+          </Link>
+          <Button variant="outline" className="w-full" onClick={logoutAction}>Logout</Button>
+        </CardContent>
       </Card>
     </div>
   );
