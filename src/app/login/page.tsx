@@ -11,11 +11,11 @@ import { z } from 'zod';
 
 import LoginForm from './login-form';
 import type { LoginState } from './login-form';
-import authService from './authService';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 import { logoutAction } from '../logoutAction';
+import getToken from './get-token';
 
 const DEFAULT_CREDENTIALS_ERROR =
   'Invalid email or password. Please check your credentials and try again.';
@@ -50,8 +50,7 @@ async function loginAction(
 
     const { email, password } = result.data;
 
-    // In real app, this would be an API call to validate credentials
-    const token = await authService.getToken(email, password);
+    const token = await getToken(email, password);
     if (!token) {
       return { error: DEFAULT_CREDENTIALS_ERROR };
     }
