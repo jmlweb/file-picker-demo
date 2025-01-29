@@ -2,3 +2,5 @@ node_modules
 dist
 build
 .next 
+.venv
+Knowledge_Base_Workflow.ipynb
