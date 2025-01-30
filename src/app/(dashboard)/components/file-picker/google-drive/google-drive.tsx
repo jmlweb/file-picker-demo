@@ -10,7 +10,7 @@ import useRootResources from './use-root-resources';
 import { ComponentPropsWithoutRef } from 'react';
 import { ExternalLink } from 'lucide-react';
 
-const { name, icon } = INTEGRATIONS_INFO['google-drive'];
+const { name, img } = INTEGRATIONS_INFO['google-drive'];
 
 const getResourceIcon = (type: string, fileName?: string) => {
   if (type === 'directory') {
@@ -44,7 +44,7 @@ export default function FilePickerGoogleDrive() {
   return (
     <FilePickerSectionLayout
       title={name}
-      icon={icon}
+      icon={img}
       footer={<div>Google Drive</div>}
     >
       {error && (

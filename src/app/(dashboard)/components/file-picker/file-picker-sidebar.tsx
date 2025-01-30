@@ -1,14 +1,13 @@
 import { Button } from '@/components/ui/button';
-import { DialogClose } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { DialogClose, DialogDescription } from '@/components/ui/dialog';
 import { cva } from 'class-variance-authority';
 import { Files, Globe, Type, X } from 'lucide-react';
-import { IntegrationName, INTEGRATIONS } from '../../config';
-import { useCurrentIntegrationStore } from '../../store';
 import Image from 'next/image';
 import { createElement } from 'react';
+import { IntegrationName, INTEGRATIONS } from '../../config';
+import { useCurrentIntegrationStore } from '../../store';
 
-const buttonStyle = cva('w-full justify-start gap-2', {
+const buttonStyle = cva('w-full justify-start gap-2 text-foreground/70 hover:text-foreground transition-colors', {
   variants: {
     selected: {
       true: 'bg-foreground/10',
@@ -108,9 +107,9 @@ export default function FilePickerSidebar() {
         <DialogClose className="outline-none ring-0">
           <X className="h-5 w-5" />
         </DialogClose>
-        Integrations
+        <DialogDescription className="text-foreground">Integrations</DialogDescription>
       </div>
-      <ul className="flex min-w-[420px] p-2 md:flex-col">
+      <ul className="flex p-2 md:flex-col">
         {INTEGRATIONS.map((integration) => (
           <FilePickerSidebarButton
             key={integration}

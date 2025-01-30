@@ -1,7 +1,8 @@
 import { DialogFooter, DialogTitle } from '@/components/ui/dialog';
 import { DialogHeader } from '@/components/ui/dialog';
 import { cva } from 'class-variance-authority';
-import { ElementType, ReactNode } from 'react';
+import Image from 'next/image';
+import { ReactNode } from 'react';
 
 const scrollAreaStyle = cva('overflow-y-auto', {
   variants: {
@@ -19,16 +20,15 @@ export default function FilePickerSectionLayout({
   footer,
 }: {
   children: ReactNode;
-  icon?: ElementType;
+  icon?: string;
   title: string;
   footer?: ReactNode;
 }) {
-  const Icon = icon;
   return (
     <div className="flex flex-1 flex-col gap-2">
       <DialogHeader className="mx-4 h-16 justify-center border-b py-4 md:mx-6">
         <DialogTitle className="flex items-center gap-2">
-          {Icon && <Icon className="h-5 w-5" />} {title}
+          {icon && <Image src={icon} alt="" width={24} height={24} className="size-6" />} {title}
         </DialogTitle>
       </DialogHeader>
       <div className={scrollAreaStyle({ withFooter: !!footer })}>

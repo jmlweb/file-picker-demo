@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
+import { useEffect, useRef } from 'react';
 import { useCurrentIntegrationStore } from '../../store';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -31,6 +31,8 @@ export default function FilePickerDialog() {
     }
   }, [isOpen]);
 
+  // If the dialog is not open and has not been opened, return null
+  // This is to save on the initial render of the page
   if (!isOpen && !hasBeenOpenedRef.current) {
     return null;
   }
