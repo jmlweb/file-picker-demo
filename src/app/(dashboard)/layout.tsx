@@ -35,7 +35,6 @@ export default async function AuthLayout({
           </div>
         </div>
       </header>
-
       {children}
     </div>
   );

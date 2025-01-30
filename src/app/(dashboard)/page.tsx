@@ -6,8 +6,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import FilePickerDialog from './components/file-picker/file-picker-dialog';
-import FilePickerButton from './components/file-picker/file-picker-button';
-import { INTEGRATION_NAMES } from './config';
+import GoogleDriveButton from './components/file-picker/google-drive/google-drive-button';
 
 export default async function Home() {
   return (
@@ -21,11 +20,7 @@ export default async function Home() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <FilePickerButton
-              integrationName={INTEGRATION_NAMES['google-drive']}
-            >
-              Pick files from Google Drive
-            </FilePickerButton>
+            <GoogleDriveButton />
           </CardContent>
         </Card>
       </main>
