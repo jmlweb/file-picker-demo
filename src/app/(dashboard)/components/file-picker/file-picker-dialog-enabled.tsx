@@ -2,11 +2,9 @@
 
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from '@/components/ui/dialog';
 import { useCurrentIntegrationStore } from '../../store';
 import FilePickerSidebar from './file-picker-sidebar';

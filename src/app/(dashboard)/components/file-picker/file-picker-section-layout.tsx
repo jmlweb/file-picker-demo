@@ -1,6 +1,5 @@
 import { DialogFooter, DialogTitle } from '@/components/ui/dialog';
 import { DialogHeader } from '@/components/ui/dialog';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { cva } from 'class-variance-authority';
 import { ElementType, ReactNode } from 'react';
 
