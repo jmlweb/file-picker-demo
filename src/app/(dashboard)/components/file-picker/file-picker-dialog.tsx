@@ -4,10 +4,7 @@ import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { useCurrentIntegrationStore } from '../../store';
 
-import {
-  Dialog,
-  DialogContent,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import FilePickerSidebar from './file-picker-sidebar';
 
 const INTEGRATION_COMPONENTS = {
@@ -39,7 +36,9 @@ export default function FilePickerDialog() {
   }
 
   const Component = currentIntegration
-    ? INTEGRATION_COMPONENTS[currentIntegration as keyof typeof INTEGRATION_COMPONENTS] ?? FilePickerNotImplemented
+    ? (INTEGRATION_COMPONENTS[
+        currentIntegration as keyof typeof INTEGRATION_COMPONENTS
+      ] ?? FilePickerNotImplemented)
     : FilePickerNotImplemented;
 
   return (
@@ -51,10 +50,15 @@ export default function FilePickerDialog() {
         }
       }}
     >
-      <DialogContent className="max-w-screen-xl p-0">
-        <div className="flex h-[32rem]">
+      <DialogContent
+        className="w-[calc(100vw-2rem)] max-w-screen-xl p-0 md:w-11/12"
+        onPointerDownOutside={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <div className="flex h-[40rem] max-w-full flex-col overflow-hidden md:h-[32rem] md:flex-row">
           <FilePickerSidebar />
-          <div className="flex flex-col flex-1">
+          <div className="flex flex-1 flex-col">
             <Component />
           </div>
         </div>

@@ -1,29 +1,36 @@
+import { Button } from '@/components/ui/button';
 import { DialogClose } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import {
-  BookOpen,
-  Cloud,
-  Database,
-  Files,
-  Globe,
-  HardDriveIcon,
-  Share2,
-  Slack,
-  Type,
-  X,
-} from 'lucide-react';
-import { IntegrationName, INTEGRATIONS } from '../../config';
-import { Button } from '@/components/ui/button';
 import { cva } from 'class-variance-authority';
+import { Files, Globe, Type, X } from 'lucide-react';
+import { IntegrationName, INTEGRATIONS } from '../../config';
 import { useCurrentIntegrationStore } from '../../store';
+import Image from 'next/image';
+import { createElement } from 'react';
+
+const buttonStyle = cva('w-full justify-start gap-2', {
+  variants: {
+    selected: {
+      true: 'bg-foreground/10',
+    },
+  },
+});
 
 export const INTEGRATIONS_INFO: Record<
   IntegrationName,
   {
     name: string;
-    icon: React.ElementType;
     count?: number;
-  }
+  } & (
+    | {
+        icon: React.ElementType;
+        img?: undefined;
+      }
+    | {
+        icon?: undefined;
+        img: string;
+      }
+  )
 > = {
   files: {
     name: 'Files',
@@ -40,37 +47,25 @@ export const INTEGRATIONS_INFO: Record<
   },
   confluence: {
     name: 'Confluence',
-    icon: Database,
+    img: '/logos/confluence.svg',
   },
   notion: {
     name: 'Notion',
-    icon: BookOpen,
+    img: '/logos/notion.svg',
   },
   'google-drive': {
     name: 'Google Drive',
-    icon: Cloud,
+    img: '/logos/google-drive.svg',
   },
   onedrive: {
     name: 'OneDrive',
-    icon: HardDriveIcon,
-  },
-  sharepoint: {
-    name: 'SharePoint',
-    icon: Share2,
+    img: '/logos/onedrive.svg',
   },
   slack: {
     name: 'Slack',
-    icon: Slack,
+    img: '/logos/slack.svg',
   },
 };
-
-const buttonStyle = cva('w-full justify-start gap-2', {
-  variants: {
-    selected: {
-      true: 'bg-foreground/10',
-    },
-  },
-});
 
 function FilePickerSidebarButton({
   integration,
@@ -78,7 +73,6 @@ function FilePickerSidebarButton({
   integration: IntegrationName;
 }) {
   const integrationInfo = INTEGRATIONS_INFO[integration];
-  const Icon = integrationInfo.icon;
   const isCurrentIntegration = useCurrentIntegrationStore(
     (state) => state.currentIntegration === integration,
   );
@@ -91,23 +85,27 @@ function FilePickerSidebarButton({
       className={buttonStyle({ selected: isCurrentIntegration })}
       onClick={() => setCurrentIntegration(integration)}
     >
-      <Icon className="h-5 w-5" />
-      {integrationInfo.name}
+      {integrationInfo.icon ? (
+        createElement(integrationInfo.icon, { size: 20 })
+      ) : (
+        <Image src={integrationInfo.img} alt="" width={20} height={20} />
+      )}
+      <span className="hidden md:block">{integrationInfo.name}</span>
     </Button>
   );
 }
 
 export default function FilePickerSidebar() {
   return (
-    <aside className="w-60 border-r border-foreground/10 bg-foreground/[0.02]">
+    <aside className="md:w-60 border-r border-foreground/10 bg-foreground/[0.02]">
       <div className="flex items-center justify-start gap-2 border-b border-foreground/10 px-4 py-3 font-bold">
         <DialogClose className="outline-none ring-0">
           <X className="-mr-1 h-5 w-5" />
         </DialogClose>
         Integrations
       </div>
-      <ScrollArea className="h-[calc(100vh-10rem)]">
-        <ul className="p-2 flex flex-col">
+      <ScrollArea className="h-14 md:h-[calc(100vh-10rem)]">
+        <ul className="flex md:flex-col p-2 min-w-[420px]">
           {INTEGRATIONS.map((integration) => (
             <FilePickerSidebarButton
               key={integration}

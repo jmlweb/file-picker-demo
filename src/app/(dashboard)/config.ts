@@ -7,7 +7,6 @@ export const INTEGRATION_NAMES = {
   notion: 'notion',
   'google-drive': 'google-drive',
   onedrive: 'onedrive',
-  sharepoint: 'sharepoint',
   slack: 'slack',
 } as const;
 
