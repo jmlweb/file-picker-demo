@@ -33,7 +33,10 @@ export default function LoginForm({
     <form action={formAction}>
       <CardContent className="space-y-4">
         {formState.error && (
-          <p aria-live="polite" className="text-sm font-medium text-destructive bg-destructive/5 p-3 rounded-md">
+          <p
+            aria-live="polite"
+            className="rounded-md bg-destructive/5 p-3 text-sm font-medium text-destructive"
+          >
             {formState.error}
           </p>
         )}
@@ -52,10 +55,10 @@ export default function LoginForm({
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
-          <Input 
-            id="password" 
-            name="password" 
-            type="password" 
+          <Input
+            id="password"
+            name="password"
+            type="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}

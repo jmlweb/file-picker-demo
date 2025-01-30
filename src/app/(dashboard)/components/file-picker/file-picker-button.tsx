@@ -16,7 +16,9 @@ export default function FilePickerButton({
   integrationName: IntegrationName;
   children: ReactNode;
 } & ComponentPropsWithoutRef<'button'>) {
-  const setCurrentIntegration = useCurrentIntegrationStore((state) => state.setCurrentIntegration);
+  const setCurrentIntegration = useCurrentIntegrationStore(
+    (state) => state.setCurrentIntegration,
+  );
 
   return (
     <Button

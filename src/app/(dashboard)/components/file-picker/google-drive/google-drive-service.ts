@@ -17,23 +17,25 @@ export const fetchConnectionId = async () => {
   return connectionIdSchema.parse(data);
 };
 
-const resourceSchema = z.object({
-  knowledge_base_id: z.string().min(1, 'Knowledge base ID is required'),
-  resource_id: z.string().min(1, 'Resource ID is required'),
-  created_at: z.string().datetime(),
-  modified_at: z.string().datetime(),
-  indexed_at: z.string().datetime().nullable(),
-  inode_type: z.enum(['directory', 'file']),
-  content_mime: z.string().optional(),
-  inode_path: z.object({
-    path: z.string().min(1, 'Path is required'),
-  }),
-  dataloader_metadata: z.object({
-    created_by: z.string().optional(),
-    web_url: z.string().url().optional(),
-    path: z.string().optional(),
-  }),
-}).passthrough();
+const resourceSchema = z
+  .object({
+    knowledge_base_id: z.string().min(1, 'Knowledge base ID is required'),
+    resource_id: z.string().min(1, 'Resource ID is required'),
+    created_at: z.string().datetime(),
+    modified_at: z.string().datetime(),
+    indexed_at: z.string().datetime().nullable(),
+    inode_type: z.enum(['directory', 'file']),
+    content_mime: z.string().optional(),
+    inode_path: z.object({
+      path: z.string().min(1, 'Path is required'),
+    }),
+    dataloader_metadata: z.object({
+      created_by: z.string().optional(),
+      web_url: z.string().url().optional(),
+      path: z.string().optional(),
+    }),
+  })
+  .passthrough();
 
 const resourcesSchema = z.array(resourceSchema);
 

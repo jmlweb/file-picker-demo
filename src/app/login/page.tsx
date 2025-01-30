@@ -63,7 +63,7 @@ async function loginAction(
       sameSite: 'strict',
     });
     redirectPath = '/';
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return {
       error: DEFAULT_CREDENTIALS_ERROR,
@@ -97,7 +97,9 @@ export default async function Login() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-foreground/5">
       <Card className="w-[350px] shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Already Logged In</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            Already Logged In
+          </CardTitle>
           <CardDescription className="mt-2 text-sm text-muted-foreground">
             You are already logged in to your account.
           </CardDescription>
@@ -106,7 +108,9 @@ export default async function Login() {
           <Link href="/" legacyBehavior passHref>
             <Button className="w-full">Go to Dashboard</Button>
           </Link>
-          <Button variant="outline" className="w-full" onClick={logoutAction}>Logout</Button>
+          <Button variant="outline" className="w-full" onClick={logoutAction}>
+            Logout
+          </Button>
         </CardContent>
       </Card>
     </div>

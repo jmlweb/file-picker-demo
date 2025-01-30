@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
-import { fetchConnectionId } from "./google-drive-service";
+import { fetchConnectionId } from './google-drive-service';
 
 export default function useConnectionId() {
   return useQuery({
@@ -9,4 +9,3 @@ export default function useConnectionId() {
     staleTime: 60000,
   });
 }
-  
