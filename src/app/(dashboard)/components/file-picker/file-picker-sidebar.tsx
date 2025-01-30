@@ -88,7 +88,13 @@ function FilePickerSidebarButton({
       {integrationInfo.icon ? (
         createElement(integrationInfo.icon, { size: 20 })
       ) : (
-        <Image src={integrationInfo.img} alt="" width={20} height={20} className="w-5 h-5" />
+        <Image
+          src={integrationInfo.img}
+          alt=""
+          width={20}
+          height={20}
+          className="h-5 w-5"
+        />
       )}
       <span className="hidden md:block">{integrationInfo.name}</span>
     </Button>
@@ -98,22 +104,20 @@ function FilePickerSidebarButton({
 export default function FilePickerSidebar() {
   return (
     <aside className="border-r border-foreground/10 bg-foreground/[0.02] md:w-60">
-      <div className="flex items-center justify-start gap-2 border-b border-foreground/10 px-4 py-3 font-bold">
+      <div className="flex items-center justify-start gap-1.5 border-b border-foreground/10 px-4 py-3 font-bold">
         <DialogClose className="outline-none ring-0">
-          <X className="-mr-1 h-5 w-5" />
+          <X className="h-5 w-5" />
         </DialogClose>
         Integrations
       </div>
-      <ScrollArea className="h-14 md:h-[calc(100vh-10rem)]">
-        <ul className="flex min-w-[420px] p-2 md:flex-col">
-          {INTEGRATIONS.map((integration) => (
-            <FilePickerSidebarButton
-              key={integration}
-              integration={integration}
-            />
-          ))}
-        </ul>
-      </ScrollArea>
+      <ul className="flex min-w-[420px] p-2 md:flex-col">
+        {INTEGRATIONS.map((integration) => (
+          <FilePickerSidebarButton
+            key={integration}
+            integration={integration}
+          />
+        ))}
+      </ul>
     </aside>
   );
 }
