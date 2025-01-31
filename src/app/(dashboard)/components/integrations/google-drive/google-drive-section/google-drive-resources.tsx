@@ -8,6 +8,11 @@ import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 const getResourceIcon = (fileName: string) => {
   const extension = fileName?.split('.').pop();
   if (extension) {
@@ -39,16 +44,28 @@ function Directory({ level, resource }: { level: number; resource: Resource }) {
           />
         </Button>
         <Checkbox className="mr-2 border-muted-foreground/40" />
-        <div className="group flex max-w-full items-center gap-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-foreground/85">
-          <Image
-            src="/file-types/directory.svg"
-            alt={resource.dataloader_metadata.path ?? resource.inode_path.path}
-            width={20}
-            height={20}
-            className="size-5"
-          />
-          <span className="flex-1">{resource.inode_path.path}</span>
-        </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="group flex max-w-full items-center gap-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-foreground/85">
+              <Image
+                src="/file-types/directory.svg"
+                alt={
+                  resource.dataloader_metadata.path ?? resource.inode_path.path
+                }
+                width={20}
+                height={20}
+                className="size-5"
+              />
+              <span className="flex-1">{resource.inode_path.path}</span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Created at: {new Date(resource.created_at).toLocaleString()}</p>
+            <p>
+              Modified at: {new Date(resource.modified_at).toLocaleString()}
+            </p>
+          </TooltipContent>
+        </Tooltip>
       </div>
       {isOpen && (
         <GoogleDriveResources
@@ -61,6 +78,7 @@ function Directory({ level, resource }: { level: number; resource: Resource }) {
 }
 
 function File({ level, resource }: { level: number; resource: Resource }) {
+  const icon = getResourceIcon(resource.inode_path.path);
   return (
     <div
       className="flex min-h-10 items-center border-t border-muted-foreground/10 py-1"
@@ -68,21 +86,31 @@ function File({ level, resource }: { level: number; resource: Resource }) {
     >
       <span className="mr-1 h-6 w-6 p-0"></span>
       <Checkbox className="mr-2 border-muted-foreground/40" />
-      <a
-        href={resource.dataloader_metadata.path}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group flex max-w-full items-center gap-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-foreground/85"
-      >
-        <Image
-          src={`/file-types/${getResourceIcon(resource.inode_path.path)}.svg`}
-          alt={resource.dataloader_metadata.path ?? resource.inode_path.path}
-          width={20}
-          height={20}
-        />
-        <span className="flex-1">{resource.inode_path.path}</span>
-        <ExternalLink className="h-4 w-4 text-foreground/50 group-hover:text-current" />
-      </a>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <a
+            href={resource.dataloader_metadata.web_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex max-w-full items-center gap-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-foreground/85"
+          >
+            <Image
+              src={`/file-types/${icon}.svg`}
+              alt={icon}
+              width={20}
+              height={20}
+            />
+            <span className="flex-1">
+              {resource.dataloader_metadata.path ?? resource.inode_path.path}
+            </span>
+            <ExternalLink className="h-4 w-4 text-foreground/50 group-hover:text-current" />
+          </a>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Created at: {new Date(resource.created_at).toLocaleString()}</p>
+          <p>Modified at: {new Date(resource.modified_at).toLocaleString()}</p>
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
 }
@@ -108,13 +136,20 @@ export function GoogleDriveResources({
 
   if (data == null) {
     return (
-      <div className={cn('flex items-center justify-center text-muted-foreground animate-pulse', {
-        'flex-1': level === 0,
-      })}>
+      <div
+        className={cn(
+          'flex animate-pulse items-center justify-center text-muted-foreground',
+          {
+            'flex-1': level === 0,
+          },
+        )}
+      >
         Loading...
       </div>
     );
   }
+
+  console.log(data);
 
   return (
     <>

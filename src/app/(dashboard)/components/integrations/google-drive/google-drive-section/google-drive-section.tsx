@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { GoogleDriveResources } from './google-drive-resources';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 function GoogleDriveSectionContent() {
   return (
@@ -19,12 +20,16 @@ function GoogleDriveSectionContent() {
             Select all
           </label>
         </div>
-        <ScrollArea className="h-[641px]">
-          <GoogleDriveResources />
-          <ScrollBar />
-        </ScrollArea>
+        <TooltipProvider>
+          <div className="max-h-[641px] flex-1">
+            <ScrollArea className="h-full">
+              <GoogleDriveResources />
+              <ScrollBar />
+            </ScrollArea>
+          </div>
+        </TooltipProvider>
       </div>
-      <DialogFooter className="mx-4 mt-auto py-2 md:mx-6 md:py-4 items-center">
+      <DialogFooter className="mx-4 mt-auto items-center py-2 md:mx-6 md:py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           We recommend selecting as few items as needed.
         </div>
