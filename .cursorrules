@@ -7,6 +7,11 @@ Key Principles
 - Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError).
 - Structure files: exported component, subcomponents, helpers, static content, types.
 
+File Structure
+- The project should be structured in a way that is easy to understand and maintain.
+- The project uses Next.js App Router.
+- The project uses `src` directory for all source code.
+
 Naming Conventions
 - Use lowercase with dashes for directories (e.g., components/auth-wizard).
 - Favor named exports for components.

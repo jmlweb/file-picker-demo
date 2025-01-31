@@ -6,17 +6,24 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { GoogleDriveResources } from './google-drive-resources';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { useAllSelectedStore } from './store';
+import { useAllSelectedStore, useUncheckStore } from './store';
 import { useCurrentIntegrationStore } from '@/app/(dashboard)/store';
+import { useEffect, useRef } from 'react';
 
 function AllItemsSelectedToggler() {
   const { allItemsSelected, toggleAllItemsSelected } = useAllSelectedStore();
+  const incrementUncheck = useUncheckStore((state) => state.incrementUncheck);
   return (
     <div className="flex items-center space-x-2 py-4">
       <Checkbox
         id="select-all"
         checked={allItemsSelected}
-        onCheckedChange={toggleAllItemsSelected}
+        onCheckedChange={(value) => {
+          toggleAllItemsSelected();
+          if (!value) {
+            incrementUncheck();
+          }
+        }}
       />
       <label
         htmlFor="select-all"
@@ -29,7 +36,11 @@ function AllItemsSelectedToggler() {
 }
 
 function GoogleDriveSectionContent() {
-  const resetCurrentIntegration = useCurrentIntegrationStore((state) => state.resetCurrentIntegration);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  const resetCurrentIntegration = useCurrentIntegrationStore(
+    (state) => state.resetCurrentIntegration,
+  );
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,13 +50,30 @@ function GoogleDriveSectionContent() {
     console.log(selectedItems);
   };
 
+  useEffect(() => {
+    const scrollArea = scrollAreaRef.current;
+    if (!scrollArea) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      scrollArea.style.setProperty(
+        '--max-scroll-area',
+        `${scrollArea.clientHeight - 20}px`,
+      );
+    });
+
+    resizeObserver.observe(scrollArea);
+    return () => resizeObserver.disconnect();
+  }, []);
+
   return (
     <form className="flex flex-1 flex-col" onSubmit={handleSubmit}>
       <div className="mx-4 flex flex-1 flex-col md:mx-6">
         <AllItemsSelectedToggler />
         <TooltipProvider>
-          <div className="max-h-[641px] flex-1">
-            <ScrollArea className="h-full">
+          <div className="flex flex-1 flex-col" ref={scrollAreaRef}>
+            <ScrollArea
+              className="[&>[data-radix-scroll-area-viewport]]:max-h-[--max-scroll-area] w-full flex-1"
+            >
               <GoogleDriveResources />
               <ScrollBar />
             </ScrollArea>
@@ -57,10 +85,16 @@ function GoogleDriveSectionContent() {
           We recommend selecting as few items as needed.
         </div>
         <div className="space-x-2">
-          <Button variant="outline" size="lg" onClick={() => resetCurrentIntegration()}>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => resetCurrentIntegration()}
+          >
             Cancel
           </Button>
-          <Button size="lg" type="submit">Select</Button>
+          <Button size="lg" type="submit">
+            Select
+          </Button>
         </div>
       </DialogFooter>
     </form>

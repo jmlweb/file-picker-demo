@@ -15,3 +15,10 @@ export const useAllSelectedStore = create<AllSelectedState>()(
       set((state) => ({ allItemsSelected: !state.allItemsSelected })),
   })),
 );
+
+export const useUncheckStore = create<{ currentUncheck: number, incrementUncheck: () => void }>()(
+  devtools((set, get) => ({
+    currentUncheck: 0,
+    incrementUncheck: () => set({ currentUncheck: get().currentUncheck + 1 }),
+  })),
+);

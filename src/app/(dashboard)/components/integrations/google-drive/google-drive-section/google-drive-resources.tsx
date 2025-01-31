@@ -13,7 +13,36 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useAllSelectedStore } from './store';
+import { useAllSelectedStore, useUncheckStore } from './store';
+import { cva } from 'class-variance-authority';
+
+const resourceRowVariants = cva(
+  'flex min-h-10 items-center whitespace-nowrap py-1', 
+  {
+    variants: {
+      variant: {
+        directory: 'border-t border-muted-foreground/20 hover:bg-muted/50',
+        file: 'border-t border-muted-foreground/10',
+      }
+    },
+    defaultVariants: {
+      variant: 'file'
+    }
+  }
+);
+
+const resourceLabelVariants = cva(
+  'group flex max-w-full items-center gap-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-foreground/85',
+  {
+    variants: {
+      interactive: {
+        true: 'hover:text-current',
+      }
+    }
+  }
+);
+
+// Utility functions
 const getResourceIcon = (fileName: string) => {
   const extension = fileName?.split('.').pop();
   if (extension) {
@@ -21,6 +50,80 @@ const getResourceIcon = (fileName: string) => {
   }
   return 'file';
 };
+
+// Reusable components
+function ResourceCheckbox({
+  resource,
+  parentChecked,
+  isChecked: controlledIsChecked,
+  setIsChecked: controlledSetIsChecked,
+}: {
+  resource: Resource;
+  parentChecked: boolean;
+  isChecked?: boolean;
+  setIsChecked?: (value: boolean) => void;
+}) {
+  const { allItemsSelected, setAllItemsSelected } = useAllSelectedStore();
+  const [uncontrolledIsChecked, setUncontrolledIsChecked] = useState(false);
+
+  const isControlled = controlledIsChecked !== undefined;
+  const isChecked = isControlled ? controlledIsChecked : uncontrolledIsChecked;
+  const setIsChecked = isControlled ? controlledSetIsChecked : setUncontrolledIsChecked;
+
+  const currentUncheck = useUncheckStore((state) => state.currentUncheck);
+
+  useEffect(() => {
+    if (currentUncheck > 0) {
+      setIsChecked?.(false);
+    }
+  }, [currentUncheck, setIsChecked]);
+
+  const handleCheckedChange = useCallback(
+    (value: boolean) => {
+      if (!value) {
+        setAllItemsSelected(false);
+      }
+      setIsChecked?.(value);
+    },
+    [setAllItemsSelected, setIsChecked],
+  );
+
+  useEffect(() => {
+    if (allItemsSelected) {
+      setIsChecked?.(true);
+    }
+  }, [allItemsSelected, setIsChecked]);
+
+  return (
+    <>
+      <Checkbox
+        className={cn('mr-2 border-muted-foreground/40', {
+          'opacity-50': parentChecked,
+        })}
+        checked={allItemsSelected || isChecked || parentChecked}
+        disabled={parentChecked}
+        onCheckedChange={handleCheckedChange}
+        value={resource.resource_id}
+      />
+      {(allItemsSelected || isChecked) && !parentChecked && (
+        <input
+          type="hidden"
+          name="selectedItems"
+          value={resource.resource_id}
+        />
+      )}
+    </>
+  );
+}
+
+function ResourceTooltip({ resource }: { resource: Resource }) {
+  return (
+    <TooltipContent>
+      <p>Created at: {new Date(resource.created_at).toLocaleString()}</p>
+      <p>Modified at: {new Date(resource.modified_at).toLocaleString()}</p>
+    </TooltipContent>
+  );
+}
 
 function Directory({
   level,
@@ -32,28 +135,12 @@ function Directory({
   parentChecked: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { allItemsSelected, setAllItemsSelected } = useAllSelectedStore();
   const [isChecked, setIsChecked] = useState(false);
-  const handleCheckedChange = useCallback(
-    (value: boolean) => {
-      if (!value) {
-        setAllItemsSelected(false);
-      }
-      setIsChecked(value);
-    },
-    [setAllItemsSelected],
-  );
-
-  useEffect(() => {
-    if (allItemsSelected) {
-      setIsChecked(true);
-    }
-  }, [allItemsSelected]);
 
   return (
     <>
       <div
-        className="group flex min-h-10 items-center border-t border-muted-foreground/20 py-1 hover:bg-muted/50"
+        className={resourceRowVariants({ variant: 'directory' })}
         style={{
           paddingLeft: `${level * 26}px`,
         }}
@@ -70,25 +157,15 @@ function Directory({
             })}
           />
         </Button>
-        <Checkbox
-          className={cn('mr-2 border-muted-foreground/40', {
-            'opacity-50': parentChecked,
-          })}
-          checked={allItemsSelected || isChecked || parentChecked}
-          disabled={parentChecked}
-          onCheckedChange={handleCheckedChange}
-          value={resource.resource_id}
+        <ResourceCheckbox
+          resource={resource}
+          parentChecked={parentChecked}
+          isChecked={isChecked}
+          setIsChecked={setIsChecked}
         />
-        {(allItemsSelected || isChecked) && !parentChecked && (
-          <input
-            type="hidden"
-            name="selectedItems"
-            value={resource.resource_id}
-          />
-        )}
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="group flex max-w-full items-center gap-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-foreground/85">
+            <div className={resourceLabelVariants()}>
               <Image
                 src="/file-types/directory.svg"
                 alt={
@@ -101,12 +178,7 @@ function Directory({
               <span className="flex-1">{resource.inode_path.path}</span>
             </div>
           </TooltipTrigger>
-          <TooltipContent>
-            <p>Created at: {new Date(resource.created_at).toLocaleString()}</p>
-            <p>
-              Modified at: {new Date(resource.modified_at).toLocaleString()}
-            </p>
-          </TooltipContent>
+          <ResourceTooltip resource={resource} />
         </Tooltip>
       </div>
       {isOpen && (
@@ -130,51 +202,24 @@ function File({
   parentChecked: boolean;
 }) {
   const icon = getResourceIcon(resource.inode_path.path);
-  const { allItemsSelected, setAllItemsSelected } = useAllSelectedStore();
-  const [isChecked, setIsChecked] = useState(false);
-  const handleCheckedChange = useCallback(
-    (value: boolean) => {
-      if (!value) {
-        setAllItemsSelected(false);
-      }
-      setIsChecked(value);
-    },
-    [setAllItemsSelected],
-  );
-  useEffect(() => {
-    if (allItemsSelected) {
-      setIsChecked(true);
-    }
-  }, [allItemsSelected]);
+
   return (
     <div
-      className="flex min-h-10 items-center whitespace-nowrap border-t border-muted-foreground/10 py-1"
+      className={resourceRowVariants()}
       style={{ paddingLeft: `${level * 26}px` }}
     >
       <span className="mr-1 h-6 w-6 p-0"></span>
-      <Checkbox
-        className={cn('mr-2 border-muted-foreground/40', {
-          'opacity-50': parentChecked,
-        })}
-        disabled={parentChecked}
-        checked={allItemsSelected || isChecked || parentChecked}
-        onCheckedChange={handleCheckedChange}
-        value={resource.resource_id}
+      <ResourceCheckbox
+        resource={resource}
+        parentChecked={parentChecked}
       />
-      {(allItemsSelected || isChecked) && !parentChecked && (
-        <input
-          type="hidden"
-          name="selectedItems"
-          value={resource.resource_id}
-        />
-      )}
       <Tooltip>
         <TooltipTrigger asChild>
           <a
             href={resource.dataloader_metadata.web_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex max-w-full items-center gap-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-foreground/85"
+            className={resourceLabelVariants({ interactive: true })}
           >
             <Image
               src={`/file-types/${icon}.svg`}
@@ -188,10 +233,7 @@ function File({
             <ExternalLink className="h-4 w-4 text-foreground/50 group-hover:text-current" />
           </a>
         </TooltipTrigger>
-        <TooltipContent>
-          <p>Created at: {new Date(resource.created_at).toLocaleString()}</p>
-          <p>Modified at: {new Date(resource.modified_at).toLocaleString()}</p>
-        </TooltipContent>
+        <ResourceTooltip resource={resource} />
       </Tooltip>
       {resource.dataloader_metadata.created_by && (
         <Tooltip>
@@ -234,9 +276,10 @@ export function GoogleDriveResources({
     return (
       <div
         className={cn(
-          'flex animate-pulse items-center justify-center text-muted-foreground',
+          'flex flex-col animate-pulse items-center justify-center text-muted-foreground min-h-10',
           {
             'flex-1': level === 0,
+            'border-t border-muted-foreground/10': level > 0,
           },
         )}
       >
