@@ -2,7 +2,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import useResources from '../use-resources';
 import { AlertCircle, ExternalLink } from 'lucide-react';
 import type { Resource } from '../google-drive-service';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -13,6 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useAllSelectedStore } from './store';
 const getResourceIcon = (fileName: string) => {
   const extension = fileName?.split('.').pop();
   if (extension) {
@@ -21,8 +22,34 @@ const getResourceIcon = (fileName: string) => {
   return 'file';
 };
 
-function Directory({ level, resource }: { level: number; resource: Resource }) {
+function Directory({
+  level,
+  resource,
+  parentChecked,
+}: {
+  level: number;
+  resource: Resource;
+  parentChecked: boolean;
+}) {
   const [isOpen, setIsOpen] = useState(false);
+  const { allItemsSelected, setAllItemsSelected } = useAllSelectedStore();
+  const [isChecked, setIsChecked] = useState(false);
+  const handleCheckedChange = useCallback(
+    (value: boolean) => {
+      if (!value) {
+        setAllItemsSelected(false);
+      }
+      setIsChecked(value);
+    },
+    [setAllItemsSelected],
+  );
+
+  useEffect(() => {
+    if (allItemsSelected) {
+      setIsChecked(true);
+    }
+  }, [allItemsSelected]);
+
   return (
     <>
       <div
@@ -43,7 +70,22 @@ function Directory({ level, resource }: { level: number; resource: Resource }) {
             })}
           />
         </Button>
-        <Checkbox className="mr-2 border-muted-foreground/40" />
+        <Checkbox
+          className={cn('mr-2 border-muted-foreground/40', {
+            'opacity-50': parentChecked,
+          })}
+          checked={allItemsSelected || isChecked || parentChecked}
+          disabled={parentChecked}
+          onCheckedChange={handleCheckedChange}
+          value={resource.resource_id}
+        />
+        {(allItemsSelected || isChecked) && !parentChecked && (
+          <input
+            type="hidden"
+            name="selectedItems"
+            value={resource.resource_id}
+          />
+        )}
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="group flex max-w-full items-center gap-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-foreground/85">
@@ -71,21 +113,61 @@ function Directory({ level, resource }: { level: number; resource: Resource }) {
         <GoogleDriveResources
           parentId={resource.resource_id}
           level={level + 1}
+          parentChecked={parentChecked || isChecked}
         />
       )}
     </>
   );
 }
 
-function File({ level, resource }: { level: number; resource: Resource }) {
+function File({
+  level,
+  resource,
+  parentChecked,
+}: {
+  level: number;
+  resource: Resource;
+  parentChecked: boolean;
+}) {
   const icon = getResourceIcon(resource.inode_path.path);
+  const { allItemsSelected, setAllItemsSelected } = useAllSelectedStore();
+  const [isChecked, setIsChecked] = useState(false);
+  const handleCheckedChange = useCallback(
+    (value: boolean) => {
+      if (!value) {
+        setAllItemsSelected(false);
+      }
+      setIsChecked(value);
+    },
+    [setAllItemsSelected],
+  );
+  useEffect(() => {
+    if (allItemsSelected) {
+      setIsChecked(true);
+    }
+  }, [allItemsSelected]);
   return (
     <div
       className="flex min-h-10 items-center whitespace-nowrap border-t border-muted-foreground/10 py-1"
       style={{ paddingLeft: `${level * 26}px` }}
     >
       <span className="mr-1 h-6 w-6 p-0"></span>
-      <Checkbox className="mr-2 border-muted-foreground/40" />
+      <Checkbox
+        className={cn('mr-2 border-muted-foreground/40', {
+          'opacity-50': parentChecked,
+        })}
+        disabled={parentChecked}
+        checked={allItemsSelected || isChecked || parentChecked}
+        onCheckedChange={handleCheckedChange}
+        value={resource.resource_id}
+      />
+      {(allItemsSelected || isChecked) && !parentChecked && (
+        <input
+          type="hidden"
+          name="selectedItems"
+          value={resource.resource_id}
+        />
+      )}
       <Tooltip>
         <TooltipTrigger asChild>
           <a
@@ -130,9 +212,11 @@ function File({ level, resource }: { level: number; resource: Resource }) {
 export function GoogleDriveResources({
   parentId,
   level = 0,
+  parentChecked = false,
 }: {
   parentId?: string;
   level?: number;
+  parentChecked?: boolean;
 }) {
   const { data, error } = useResources(parentId);
 
@@ -161,8 +245,6 @@ export function GoogleDriveResources({
     );
   }
 
-  console.log(data);
-
   return (
     <>
       {data.map((resource) =>
@@ -171,9 +253,15 @@ export function GoogleDriveResources({
             key={resource.resource_id}
             level={level}
             resource={resource}
+            parentChecked={parentChecked}
           />
         ) : (
-          <File key={resource.resource_id} level={level} resource={resource} />
+          <File
+            key={resource.resource_id}
+            level={level}
+            resource={resource}
+            parentChecked={parentChecked}
+          />
         ),
       )}
     </>
