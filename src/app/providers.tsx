@@ -3,7 +3,7 @@
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 
 export function createQueryClient() {
   const queryClient = new QueryClient({
@@ -33,7 +33,7 @@ export function createQueryClient() {
 }
 
 export default function Providers({ children }: { children: ReactNode }) {
-  const queryClient = createQueryClient()
+  const queryClient = createQueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>

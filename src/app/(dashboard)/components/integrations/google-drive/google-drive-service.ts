@@ -11,7 +11,7 @@ const inodePathSchema = z.object({
 
 const dataloaderMetadataSchema = z.object({
   created_by: z.string().optional(),
-  web_url: z.string().url().optional(), 
+  web_url: z.string().url().optional(),
   path: z.string().optional(),
 });
 
@@ -35,20 +35,21 @@ const resourcesSchema = z.array(resourceSchema);
 
 // API error handling
 function handleApiError(response: Response, defaultMessage: string): never {
-  const errorMessage = response.statusText === 'UNAUTHORIZED' 
-    ? response.statusText
-    : defaultMessage;
+  const errorMessage =
+    response.statusText === 'UNAUTHORIZED'
+      ? response.statusText
+      : defaultMessage;
   throw new Error(errorMessage);
 }
 
 // API calls
 export async function fetchConnectionId() {
   const response = await fetch(`${BASE_URL}/connection-id`);
-  
+
   if (!response.ok) {
     handleApiError(response, 'Failed to fetch connection id');
   }
-  
+
   const data = await response.json();
   return connectionIdSchema.parse(data);
 }

@@ -20,5 +20,5 @@ export default function GoogleDriveTrigger() {
     >
       Pick files from Google Drive
     </Button>
-  )
+  );
 }

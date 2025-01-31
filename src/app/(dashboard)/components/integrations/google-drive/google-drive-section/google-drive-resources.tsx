@@ -17,18 +17,18 @@ import { useAllSelectedStore, useUncheckStore } from './store';
 import { cva } from 'class-variance-authority';
 
 const resourceRowVariants = cva(
-  'flex min-h-10 items-center whitespace-nowrap py-1', 
+  'flex min-h-10 items-center whitespace-nowrap py-1',
   {
     variants: {
       variant: {
         directory: 'border-t border-muted-foreground/20 hover:bg-muted/50',
         file: 'border-t border-muted-foreground/10',
-      }
+      },
     },
     defaultVariants: {
-      variant: 'file'
-    }
-  }
+      variant: 'file',
+    },
+  },
 );
 
 const resourceLabelVariants = cva(
@@ -37,9 +37,9 @@ const resourceLabelVariants = cva(
     variants: {
       interactive: {
         true: 'hover:text-current',
-      }
-    }
-  }
+      },
+    },
+  },
 );
 
 // Utility functions
@@ -68,7 +68,9 @@ function ResourceCheckbox({
 
   const isControlled = controlledIsChecked !== undefined;
   const isChecked = isControlled ? controlledIsChecked : uncontrolledIsChecked;
-  const setIsChecked = isControlled ? controlledSetIsChecked : setUncontrolledIsChecked;
+  const setIsChecked = isControlled
+    ? controlledSetIsChecked
+    : setUncontrolledIsChecked;
 
   const currentUncheck = useUncheckStore((state) => state.currentUncheck);
 
@@ -209,10 +211,7 @@ function File({
       style={{ paddingLeft: `${level * 26}px` }}
     >
       <span className="mr-1 h-6 w-6 p-0"></span>
-      <ResourceCheckbox
-        resource={resource}
-        parentChecked={parentChecked}
-      />
+      <ResourceCheckbox resource={resource} parentChecked={parentChecked} />
       <Tooltip>
         <TooltipTrigger asChild>
           <a
@@ -276,7 +275,7 @@ export function GoogleDriveResources({
     return (
       <div
         className={cn(
-          'flex flex-col animate-pulse items-center justify-center text-muted-foreground min-h-10',
+          'flex min-h-10 animate-pulse flex-col items-center justify-center text-muted-foreground',
           {
             'flex-1': level === 0,
             'border-t border-muted-foreground/10': level > 0,

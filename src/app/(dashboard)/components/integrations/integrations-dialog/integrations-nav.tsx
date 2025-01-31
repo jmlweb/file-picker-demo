@@ -98,7 +98,7 @@ function NavButton({ integration }: { integration: IntegrationName }) {
 
 export default function IntegrationsNav() {
   return (
-    <ul className="flex p-2 md:flex-col w-max md:w-full">
+    <ul className="flex w-max p-2 md:w-full md:flex-col">
       {INTEGRATIONS.map((integration) => (
         <li key={integration}>
           <NavButton integration={integration} />

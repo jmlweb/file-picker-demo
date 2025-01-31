@@ -44,7 +44,11 @@ export default function IntegrationsDialog() {
 
   return (
     <EnabledIntegrationsDialog open={open} onOpenChange={onOpenChange}>
-      {currentIntegration === INTEGRATION_NAMES['google-drive'] ? <GoogleDriveSection /> : <NotImplemented />}
+      {currentIntegration === INTEGRATION_NAMES['google-drive'] ? (
+        <GoogleDriveSection />
+      ) : (
+        <NotImplemented />
+      )}
     </EnabledIntegrationsDialog>
   );
 }

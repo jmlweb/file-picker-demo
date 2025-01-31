@@ -16,7 +16,10 @@ export const useAllSelectedStore = create<AllSelectedState>()(
   })),
 );
 
-export const useUncheckStore = create<{ currentUncheck: number, incrementUncheck: () => void }>()(
+export const useUncheckStore = create<{
+  currentUncheck: number;
+  incrementUncheck: () => void;
+}>()(
   devtools((set, get) => ({
     currentUncheck: 0,
     incrementUncheck: () => set({ currentUncheck: get().currentUncheck + 1 }),

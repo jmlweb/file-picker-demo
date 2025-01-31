@@ -71,9 +71,7 @@ function GoogleDriveSectionContent() {
         <AllItemsSelectedToggler />
         <TooltipProvider>
           <div className="flex flex-1 flex-col" ref={scrollAreaRef}>
-            <ScrollArea
-              className="[&>[data-radix-scroll-area-viewport]]:max-h-[--max-scroll-area] w-full flex-1"
-            >
+            <ScrollArea className="w-full flex-1 [&>[data-radix-scroll-area-viewport]]:max-h-[--max-scroll-area]">
               <GoogleDriveResources />
               <ScrollBar />
             </ScrollArea>

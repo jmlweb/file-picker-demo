@@ -11,8 +11,10 @@ export async function GET(request: NextRequest) {
     return new Response('Bad Request', { status: 400 });
   }
   const parentId = request.nextUrl.searchParams.get('parent_id');
-  const url = new URL(`${backendURL}/connections/${connectionId}/resources/children`);
-  
+  const url = new URL(
+    `${backendURL}/connections/${connectionId}/resources/children`,
+  );
+
   if (parentId) {
     url.searchParams.set('resource_id', parentId);
   }
