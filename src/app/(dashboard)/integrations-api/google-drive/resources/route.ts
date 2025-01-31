@@ -10,7 +10,12 @@ export async function GET(request: NextRequest) {
   if (!connectionId) {
     return new Response('Bad Request', { status: 400 });
   }
-  const url = `${backendURL}/connections/${connectionId}/resources/children`;
+  const parentId = request.nextUrl.searchParams.get('parent_id');
+  const url = new URL(`${backendURL}/connections/${connectionId}/resources/children`);
+  
+  if (parentId) {
+    url.searchParams.set('resource_id', parentId);
+  }
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,

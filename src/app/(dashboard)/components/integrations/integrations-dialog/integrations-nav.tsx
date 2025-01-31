@@ -4,22 +4,24 @@ import { cva } from 'class-variance-authority';
 import { Files, Globe, Type, X } from 'lucide-react';
 import Image from 'next/image';
 import { createElement } from 'react';
-import { IntegrationName, INTEGRATIONS } from '../../config';
-import { useCurrentIntegrationStore } from '../../store';
+import { IntegrationName, INTEGRATIONS } from '../../../config';
+import { useCurrentIntegrationStore } from '../../../store';
 
-const buttonStyle = cva('w-full justify-start gap-2 text-foreground/70 hover:text-foreground transition-colors', {
-  variants: {
-    selected: {
-      true: 'bg-foreground/10',
+const buttonStyle = cva(
+  'w-full justify-start gap-2 text-foreground/70 hover:text-foreground transition-colors',
+  {
+    variants: {
+      selected: {
+        true: 'bg-foreground/10',
+      },
     },
   },
-});
+);
 
 export const INTEGRATIONS_INFO: Record<
   IntegrationName,
   {
     name: string;
-    count?: number;
   } & (
     | {
         icon: React.ElementType;
@@ -34,7 +36,6 @@ export const INTEGRATIONS_INFO: Record<
   files: {
     name: 'Files',
     icon: Files,
-    count: 4,
   },
   websites: {
     name: 'Websites',
@@ -66,11 +67,7 @@ export const INTEGRATIONS_INFO: Record<
   },
 };
 
-function FilePickerSidebarButton({
-  integration,
-}: {
-  integration: IntegrationName;
-}) {
+function NavButton({ integration }: { integration: IntegrationName }) {
   const integrationInfo = INTEGRATIONS_INFO[integration];
   const isCurrentIntegration = useCurrentIntegrationStore(
     (state) => state.currentIntegration === integration,
@@ -100,23 +97,14 @@ function FilePickerSidebarButton({
   );
 }
 
-export default function FilePickerSidebar() {
+export default function IntegrationsNav() {
   return (
-    <aside className="border-r border-foreground/10 bg-foreground/[0.02] md:w-60">
-      <div className="flex items-center justify-start gap-1.5 border-b border-foreground/10 px-4 py-3 font-bold">
-        <DialogClose className="outline-none ring-0">
-          <X className="h-5 w-5" />
-        </DialogClose>
-        <DialogDescription className="text-foreground">Integrations</DialogDescription>
-      </div>
-      <ul className="flex p-2 md:flex-col">
-        {INTEGRATIONS.map((integration) => (
-          <FilePickerSidebarButton
-            key={integration}
-            integration={integration}
-          />
-        ))}
-      </ul>
-    </aside>
+    <ul className="flex p-2 md:flex-col w-max md:w-full">
+      {INTEGRATIONS.map((integration) => (
+        <li key={integration}>
+          <NavButton integration={integration} />
+        </li>
+      ))}
+    </ul>
   );
 }

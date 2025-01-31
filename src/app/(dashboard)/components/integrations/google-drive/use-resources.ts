@@ -1,17 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchRootResources } from './google-drive-service';
+import { fetchResources } from './google-drive-service';
 import useConnectionId from './use-connection-id';
 
-export default function useRootResources() {
+export default function useResources(parentId?: string) {
   const { data: connectionId } = useConnectionId();
 
   return useQuery({
-    queryKey: ['rootResources', connectionId],
+    queryKey: ['resources', connectionId, parentId ?? ''],
     queryFn: () => {
       if (!connectionId) {
         throw new Error('Connection ID is required');
       }
-      return fetchRootResources(connectionId);
+      return fetchResources(connectionId, parentId);
     },
     enabled: !!connectionId,
     staleTime: 30000,
