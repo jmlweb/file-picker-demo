@@ -81,7 +81,7 @@ function File({ level, resource }: { level: number; resource: Resource }) {
   const icon = getResourceIcon(resource.inode_path.path);
   return (
     <div
-      className="flex min-h-10 items-center border-t border-muted-foreground/10 py-1"
+      className="flex min-h-10 items-center whitespace-nowrap border-t border-muted-foreground/10 py-1"
       style={{ paddingLeft: `${level * 26}px` }}
     >
       <span className="mr-1 h-6 w-6 p-0"></span>
@@ -111,6 +111,18 @@ function File({ level, resource }: { level: number; resource: Resource }) {
           <p>Modified at: {new Date(resource.modified_at).toLocaleString()}</p>
         </TooltipContent>
       </Tooltip>
+      {resource.dataloader_metadata.created_by && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span className="ml-3 block w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-muted-foreground">
+              {resource.dataloader_metadata.created_by}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{resource.dataloader_metadata.created_by}</p>
+          </TooltipContent>
+        </Tooltip>
+      )}
     </div>
   );
 }
