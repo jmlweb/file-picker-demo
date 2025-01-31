@@ -1,7 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import useResources from '../use-resources';
 import { AlertCircle, ExternalLink } from 'lucide-react';
-import type { Resource } from '../google-drive-service';
+import { fetchResources, type Resource } from '../google-drive-service';
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
@@ -15,6 +15,8 @@ import {
 } from '@/components/ui/tooltip';
 import { useAllSelectedStore, useUncheckStore } from './store';
 import { cva } from 'class-variance-authority';
+import { useQueryClient } from '@tanstack/react-query';
+import useConnectionId from '../use-connection-id';
 
 const resourceRowVariants = cva(
   'flex min-h-10 items-center whitespace-nowrap py-1',
@@ -139,10 +141,26 @@ function Directory({
   const [isOpen, setIsOpen] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
 
+  const queryClient = useQueryClient();
+  const { data: connectionId } = useConnectionId();
+
+  const prefetchResources = useCallback(() => {
+    if (!connectionId) return;
+    queryClient.prefetchQuery({
+      queryKey: ['resources', connectionId, resource.resource_id],
+      queryFn: () => {
+        return fetchResources(connectionId, resource.resource_id);
+      },
+      staleTime: 30000,
+    });
+  }, [queryClient, connectionId, resource.resource_id]);
+
   return (
     <>
       <div
         className={resourceRowVariants({ variant: 'directory' })}
+        onMouseEnter={prefetchResources}
+        onFocus={prefetchResources}
         style={{
           paddingLeft: `${level * 26}px`,
         }}
