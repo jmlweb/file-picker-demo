@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
-import { DialogClose, DialogDescription } from '@/components/ui/dialog';
 import { cva } from 'class-variance-authority';
-import { Files, Globe, Type, X } from 'lucide-react';
+import { Files, Globe, Type } from 'lucide-react';
 import Image from 'next/image';
 import { createElement } from 'react';
 import { IntegrationName, INTEGRATIONS } from '../../../config';
