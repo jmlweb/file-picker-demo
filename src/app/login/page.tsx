@@ -16,6 +16,7 @@ import Link from 'next/link';
 
 import { logoutAction } from '../logoutAction';
 import getToken from './get-token';
+import { TOKEN_COOKIE } from '@/config/server';
 
 const DEFAULT_CREDENTIALS_ERROR =
   'Invalid email or password. Please check your credentials and try again.';
@@ -79,7 +80,7 @@ async function loginAction(
 
 export default async function Login() {
   const cookieStore = await cookies();
-  const token = cookieStore.get('token');
+  const token = cookieStore.get(TOKEN_COOKIE);
 
   return !token ? (
     <div className="flex min-h-screen items-center justify-center bg-foreground/5">

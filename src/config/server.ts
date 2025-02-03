@@ -11,3 +11,5 @@ export const { authURL, anonKey, backendURL } = envSchema.parse({
   anonKey: process.env.SUPABASE_ANON_KEY,
   backendURL: process.env.BACKEND_URL,
 });
+
+export const TOKEN_COOKIE = 'token';

@@ -1,8 +1,8 @@
-import { backendURL } from '@/config/server';
+import { backendURL, TOKEN_COOKIE } from '@/config/server';
 import { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
-  const token = request.cookies.get('token')?.value;
+  const token = request.cookies.get(TOKEN_COOKIE)?.value;
   if (!token) {
     return new Response('Unauthorized', { status: 401 });
   }

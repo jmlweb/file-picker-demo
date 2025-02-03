@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 import { logoutAction } from '../logoutAction';
+import { TOKEN_COOKIE } from '@/config/server';
 
 export default async function AuthLayout({
   children,
@@ -12,7 +13,7 @@ export default async function AuthLayout({
   children: React.ReactNode;
 }>) {
   const cookieStore = await cookies();
-  const token = cookieStore.get('token');
+  const token = cookieStore.get(TOKEN_COOKIE);
 
   if (!token) {
     redirect('/login');

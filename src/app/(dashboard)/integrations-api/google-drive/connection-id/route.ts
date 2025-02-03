@@ -1,8 +1,9 @@
 import { NextRequest } from 'next/server';
 import getConnectionId from './get-connection-id';
+import { TOKEN_COOKIE } from '@/config/server';
 
 export async function GET(request: NextRequest) {
-  const token = request.cookies.get('token')?.value;
+  const token = request.cookies.get(TOKEN_COOKIE)?.value;
   if (!token) {
     return new Response('Unauthorized', { status: 401 });
   }
