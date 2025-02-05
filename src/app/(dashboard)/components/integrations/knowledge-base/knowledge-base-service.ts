@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { resourcesSchema } from '../schemas';
+
 const kbSchema = z
   .object({
     knowledge_base_id: z.string(),
@@ -30,4 +32,18 @@ export async function createKb(
   }
   const data = await response.json();
   return kbSchema.parse(data);
+}
+
+const kbResourcesSchema = z.object({
+  data: resourcesSchema,
+}).transform(({ data }) => data);
+
+export async function getKbResources(kbId: KbId) {
+  const response = await fetch(`/integrations-api/knowledge-database?knowledgeBaseId=${kbId}`,
+  );
+  if (!response.ok) {
+    throw new Error('Failed to fetch resources');
+  }
+  const data = await response.json();
+  return kbResourcesSchema.parse(data);
 }

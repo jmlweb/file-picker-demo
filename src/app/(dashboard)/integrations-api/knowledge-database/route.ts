@@ -83,11 +83,13 @@ export async function GET(request: NextRequest) {
   const url = new URL(
     `${backendURL}/knowledge_bases/${knowledgeBaseId}/resources/children`,
   );
+  url.searchParams.set('resource_path', '/');
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+  console.log(response);
   if (!response.ok) {
     return new Response(response.statusText, { status: response.status });
   }

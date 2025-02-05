@@ -1,33 +1,34 @@
-import Image from 'next/image';
-import IntegrationsContentLayout from '../../integrations-content-layout/integrations-content-layout';
-import { DialogFooter } from '@/components/ui/dialog';
+import { useCurrentIntegrationStore } from '@/app/(dashboard)/store';
+import useProfile from '@/app/(dashboard)/use-profile';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { GoogleDriveResources } from './google-drive-resources';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { DialogFooter } from '@/components/ui/dialog';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { useAllSelectedStore, useUncheckStore } from './store';
-import { useCurrentIntegrationStore } from '@/app/(dashboard)/store';
-import useScrollAreaResizing from './use-scroll-area-resizing';
-import { useMutation } from '@tanstack/react-query';
-import useProfile from '@/app/(dashboard)/use-profile';
-import { Loader2 } from 'lucide-react';
-import useConnectionId from '../use-connection-id';
-import { createKb } from '../../../knowledge-base/knowledge-base-service';
-import { useKbPendingOpsStore } from '../../../knowledge-base/store';
 import { useToast } from '@/hooks/use-toast';
+import { useMutation } from '@tanstack/react-query';
+import { Loader2 } from 'lucide-react';
+import Image from 'next/image';
+import { createKb } from '../../knowledge-base/knowledge-base-service';
+import { useKbPendingOpsStore } from '../../knowledge-base/store';
+import IntegrationsContentLayout from '../../integrations-content-layout/integrations-content-layout';
+import useConnectionId from '../use-connection-id';
+import { GoogleDriveResources } from './google-drive-resources';
+import ScrollLayout from './scroll-layout';
+import { useAllSelectedStore, useUncheckStore } from './store';
+import { useRouter } from 'next/navigation';
 
 function AllItemsSelectedToggler() {
-  const { allItemsSelected, toggleAllItemsSelected } = useAllSelectedStore();
+  const { allItemsSelected, setAllItemsSelected } = useAllSelectedStore();
   const incrementUncheck = useUncheckStore((state) => state.incrementUncheck);
   return (
     <div className="flex items-center space-x-2 py-4">
       <Checkbox
         id="select-all"
         checked={allItemsSelected}
-        onCheckedChange={(value) => {
-          toggleAllItemsSelected();
-          if (!value) {
+        onCheckedChange={(event) => {
+          const isChecked = typeof event === 'boolean' ? event : false;
+          setAllItemsSelected(isChecked);
+          if (!isChecked) {
             incrementUncheck();
           }
         }}
@@ -43,7 +44,6 @@ function AllItemsSelectedToggler() {
 }
 
 function GoogleDriveSectionContent() {
-  const scrollAreaRef = useScrollAreaResizing();
   const addPendingOps = useKbPendingOpsStore((state) => state.addPendingOps);
   const removePendingOps = useKbPendingOpsStore(
     (state) => state.removePendingOps,
@@ -51,6 +51,7 @@ function GoogleDriveSectionContent() {
   const { data: connectionId } = useConnectionId();
   const { data: profileData } = useProfile();
   const { toast } = useToast();
+  const router = useRouter();
   const createKbMutation = useMutation({
     mutationFn: async (selectedItems: string[]) => {
       if (!connectionId) {
@@ -89,15 +90,19 @@ function GoogleDriveSectionContent() {
         toast({
           title: 'Error creating knowledge base',
           description: error.message,
+          variant: 'destructive',
         });
         removePendingOps(selectedItems);
       },
+      onSuccess: (kbId) => {
+        toast({
+          title: 'Knowledge base created',
+          description: 'Your knowledge base has been created and is being indexed',
+        });
+        resetCurrentIntegration();
+        router.push(`/?kbId=${kbId}`);
+      },
     });
-    toast({
-      title: 'Knowledge base created',
-      description: 'Your knowledge base has been created and is being indexed',
-    });
-    resetCurrentIntegration();
   };
 
   return (
@@ -105,12 +110,9 @@ function GoogleDriveSectionContent() {
       <div className="mx-4 flex flex-1 flex-col md:mx-6">
         <AllItemsSelectedToggler />
         <TooltipProvider>
-          <div className="flex flex-1 flex-col" ref={scrollAreaRef}>
-            <ScrollArea className="w-full flex-1 [&>[data-radix-scroll-area-viewport]]:max-h-[--max-scroll-area]">
-              <GoogleDriveResources />
-              <ScrollBar />
-            </ScrollArea>
-          </div>
+          <ScrollLayout>
+            <GoogleDriveResources />
+          </ScrollLayout>
         </TooltipProvider>
       </div>
       <DialogFooter className="mx-4 mt-auto items-center py-2 md:mx-6 md:py-4">
@@ -148,7 +150,7 @@ function GoogleDriveSectionContent() {
   );
 }
 
-export default function GoogleDriveSection() {
+export default function GoogleDriveSection({ kbId }: { kbId: string | null }) {
   return (
     <IntegrationsContentLayout
       title={
