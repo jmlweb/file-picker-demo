@@ -14,6 +14,6 @@ export default function useResources(parentId?: string) {
       return fetchResources(connectionId, parentId);
     },
     enabled: !!connectionId,
-    staleTime: 30000,
+    staleTime: 30 * 1000,
   });
 }

@@ -10,7 +10,7 @@ export function createQueryClient() {
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60 * 5, // 5 minutes
-        gcTime: 1000 * 60 * 60, // 1 hour
+        gcTime: 6 * 1000 * 60 * 60, // 6 hours
       },
     },
   });
@@ -24,7 +24,7 @@ export function createQueryClient() {
     persistQueryClient({
       queryClient,
       persister,
-      maxAge: 1000 * 60 * 60, // 1 hour
+      maxAge: 6 * 1000 * 60 * 60, // 6 hours
       buster: process.env.NEXT_PUBLIC_APP_VERSION, // Optional cache buster
     });
   }

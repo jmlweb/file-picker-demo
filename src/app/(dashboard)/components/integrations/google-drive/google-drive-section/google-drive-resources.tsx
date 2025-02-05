@@ -1,6 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import useResources from '../use-resources';
-import { AlertCircle, ExternalLink } from 'lucide-react';
+import { AlertCircle, ExternalLink, Trash } from 'lucide-react';
 import { fetchResources, type Resource } from '../google-drive-service';
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,10 @@ import { useAllSelectedStore, useUncheckStore } from './store';
 import { cva } from 'class-variance-authority';
 import { useQueryClient } from '@tanstack/react-query';
 import useConnectionId from '../use-connection-id';
+
+const DEFAULT_KNOWLEDGE_ID = '00000000-0000-0000-0000-000000000000';
+
+const extractFileName = (path: string) => path.split('/').pop() ?? path;
 
 const resourceRowVariants = cva(
   'flex min-h-10 items-center whitespace-nowrap py-1',
@@ -120,6 +124,28 @@ function ResourceCheckbox({
   );
 }
 
+function ResourceRemoveButton({ resource }: { resource: Resource }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          type="button"
+          className={cn('-m-1 mr-1 h-6 w-6 text-muted-foreground', {
+            'opacity-50': false,
+          })}
+        >
+          <Trash className="h-4 w-4" />
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent side="right">
+        <p>Remove from knowledge base: {resource.knowledge_base_id}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 function ResourceTooltip({ resource }: { resource: Resource }) {
   return (
     <TooltipContent>
@@ -170,6 +196,7 @@ function Directory({
           size="icon"
           className="mr-1 h-6 w-6 p-0"
           onClick={() => setIsOpen(!isOpen)}
+          type="button"
         >
           <ChevronRight
             className={cn('h-3 w-3 transition-transform', {
@@ -188,14 +215,14 @@ function Directory({
             <div className={resourceLabelVariants()}>
               <Image
                 src="/file-types/directory.svg"
-                alt={
-                  resource.dataloader_metadata.path ?? resource.inode_path.path
-                }
+                alt="directory"
                 width={20}
                 height={20}
                 className="size-5"
               />
-              <span className="flex-1">{resource.inode_path.path}</span>
+              <span className="flex-1">
+                {extractFileName(resource.inode_path.path)}
+              </span>
             </div>
           </TooltipTrigger>
           <ResourceTooltip resource={resource} />
@@ -229,7 +256,12 @@ function File({
       style={{ paddingLeft: `${level * 26}px` }}
     >
       <span className="mr-1 h-6 w-6 p-0"></span>
-      <ResourceCheckbox resource={resource} parentChecked={parentChecked} />
+      {resource.knowledge_base_id &&
+      resource.knowledge_base_id !== DEFAULT_KNOWLEDGE_ID ? (
+        <ResourceRemoveButton resource={resource} />
+      ) : (
+        <ResourceCheckbox resource={resource} parentChecked={parentChecked} />
+      )}
       <Tooltip>
         <TooltipTrigger asChild>
           <a
@@ -245,7 +277,9 @@ function File({
               height={20}
             />
             <span className="flex-1">
-              {resource.dataloader_metadata.path ?? resource.inode_path.path}
+              {extractFileName(
+                resource.dataloader_metadata.path ?? resource.inode_path.path,
+              )}
             </span>
             <ExternalLink className="h-4 w-4 text-foreground/50 group-hover:text-current" />
           </a>

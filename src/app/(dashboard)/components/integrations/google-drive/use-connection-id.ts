@@ -6,6 +6,6 @@ export default function useConnectionId() {
   return useQuery({
     queryKey: ['connectionId'],
     queryFn: fetchConnectionId,
-    staleTime: 60000,
+    staleTime: 5 * 60 * 1000,
   });
 }
