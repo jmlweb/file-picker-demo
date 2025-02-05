@@ -5,15 +5,17 @@ import { resourcesSchema } from '../schemas';
 const kbSchema = z
   .object({
     knowledge_base_id: z.string(),
-  })
-  .transform((data) => data.knowledge_base_id);
+    name: z.string(),
+    description: z.string().datetime(),
+    created_at: z.string().datetime(),
+  });
 
-export type KbId = z.infer<typeof kbSchema>;
+export type KbSchema = z.infer<typeof kbSchema>;
 
 export async function createKb(
   connectionId: string,
   selectedItems: string[],
-): Promise<KbId> {
+): Promise<KbSchema> {
   const response = await fetch('/integrations-api/knowledge-database', {
     method: 'POST',
     body: JSON.stringify({
@@ -40,7 +42,7 @@ const kbResourcesSchema = z
   })
   .transform(({ data }) => data);
 
-export async function getKbResources(kbId: KbId) {
+export async function getKbResources(kbId: string) {
   const response = await fetch(
     `/integrations-api/knowledge-database?knowledgeBaseId=${kbId}`,
   );

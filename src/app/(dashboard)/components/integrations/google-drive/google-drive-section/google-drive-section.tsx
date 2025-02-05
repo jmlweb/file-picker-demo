@@ -57,17 +57,17 @@ function GoogleDriveSectionContent() {
       if (!connectionId) {
         throw new Error('No connection ID found');
       }
-      const kbId = await createKb(connectionId, selectedItems);
+      const kbData = await createKb(connectionId, selectedItems);
       if (!profileData) {
         throw new Error('No profile data found');
       }
       const syncResponse = await fetch(
-        `/integrations-api/knowledge-database/sync?knowledgeBaseId=${kbId}&orgId=${profileData.org_id}`,
+        `/integrations-api/knowledge-database/sync?knowledgeBaseId=${kbData.knowledge_base_id}&orgId=${profileData.org_id}`,
       );
       if (!syncResponse.ok) {
         throw new Error('Failed to sync knowledge base');
       }
-      return kbId;
+      return kbData;
     },
   });
 
@@ -94,14 +94,14 @@ function GoogleDriveSectionContent() {
         });
         removePendingOps(selectedItems);
       },
-      onSuccess: (kbId) => {
+      onSuccess: (kbData) => {
         toast({
           title: 'Knowledge base created',
           description:
             'Your knowledge base has been created and is being indexed',
         });
         resetCurrentIntegration();
-        router.push(`/?kbId=${kbId}`);
+        router.push(`/?kbId=${kbData.knowledge_base_id}`);
       },
     });
   };
