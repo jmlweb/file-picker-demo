@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const profileSchema = z.object({
-  organization_id: z.string(),
+  org_id: z.string(),
 });
 
 export type Profile = z.infer<typeof profileSchema>;
@@ -16,5 +16,6 @@ export async function getProfile(): Promise<Profile> {
     );
   }
   const data = await response.json();
+  console.log('data', data);
   return profileSchema.parse(data);
 }

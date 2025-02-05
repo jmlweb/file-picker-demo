@@ -1,13 +1,12 @@
 'use client';
 
 import useProfile from '@/app/(dashboard)/use-profile';
-import { ReactNode } from 'react';
+import { ReactNode, memo } from 'react';
 
-export default function DashboardProviders({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  useProfile();
+function DashboardProviders({ children }: { children: ReactNode }) {
+  const query = useProfile();
+  console.log(query);
   return <>{children}</>;
 }
+
+export default memo(DashboardProviders);

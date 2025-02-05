@@ -9,7 +9,7 @@ import GoogleDriveTrigger from './components/integrations/google-drive/google-dr
 import IntegrationsDialog from './components/integrations/integrations-dialog/integrations-dialog';
 import DashboardProviders from './providers';
 
-export default async function Home() {
+export default function Home() {
   return (
     <DashboardProviders>
       <>

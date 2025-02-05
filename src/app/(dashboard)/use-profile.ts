@@ -5,6 +5,11 @@ export default function useProfile() {
   return useQuery({
     queryKey: ['profile'],
     queryFn: getProfile,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 10 * (60 * 1000), // 10 mins
+    gcTime: 15 * (60 * 1000), // 15 mins
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchIntervalInBackground: false,
   });
 }
