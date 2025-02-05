@@ -6,10 +6,9 @@ export default function useKbResources(kbId: string | null) {
     queryKey: ['kb-resources', kbId],
     queryFn: () => {
       if (!kbId) {
-        throw new Error('kbId is required');
+        return [];
       }
       return getKbResources(kbId);
     },
-    enabled: !!kbId,
   });
 }

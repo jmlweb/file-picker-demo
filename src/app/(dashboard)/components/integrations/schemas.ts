@@ -1,7 +1,9 @@
 import { z } from 'zod';
 
 // Schema definitions
-export const connectionIdSchema = z.string().min(1, 'Connection ID is required');
+export const connectionIdSchema = z
+  .string()
+  .min(1, 'Connection ID is required');
 
 const inodePathSchema = z.object({
   path: z.string().min(1, 'Path is required'),

@@ -34,12 +34,15 @@ export async function createKb(
   return kbSchema.parse(data);
 }
 
-const kbResourcesSchema = z.object({
-  data: resourcesSchema,
-}).transform(({ data }) => data);
+const kbResourcesSchema = z
+  .object({
+    data: resourcesSchema,
+  })
+  .transform(({ data }) => data);
 
 export async function getKbResources(kbId: KbId) {
-  const response = await fetch(`/integrations-api/knowledge-database?knowledgeBaseId=${kbId}`,
+  const response = await fetch(
+    `/integrations-api/knowledge-database?knowledgeBaseId=${kbId}`,
   );
   if (!response.ok) {
     throw new Error('Failed to fetch resources');

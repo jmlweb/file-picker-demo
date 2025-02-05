@@ -97,7 +97,8 @@ function GoogleDriveSectionContent() {
       onSuccess: (kbId) => {
         toast({
           title: 'Knowledge base created',
-          description: 'Your knowledge base has been created and is being indexed',
+          description:
+            'Your knowledge base has been created and is being indexed',
         });
         resetCurrentIntegration();
         router.push(`/?kbId=${kbId}`);
@@ -150,7 +151,7 @@ function GoogleDriveSectionContent() {
   );
 }
 
-export default function GoogleDriveSection({ kbId }: { kbId: string | null }) {
+export default function GoogleDriveSection() {
   return (
     <IntegrationsContentLayout
       title={
