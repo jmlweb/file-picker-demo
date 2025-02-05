@@ -8,7 +8,14 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useAllSelectedStore, useUncheckStore } from './store';
 import { useCurrentIntegrationStore } from '@/app/(dashboard)/store';
-import { useEffect, useRef } from 'react';
+import useScrollAreaResizing from './use-scroll-area-resizing';
+import { useMutation } from '@tanstack/react-query';
+import useProfile from '@/app/(dashboard)/use-profile';
+import { Loader2 } from 'lucide-react';
+import useConnectionId from '../use-connection-id';
+import { createKb } from '../../../knowledge-base/knowledge-base-service';
+import { useKbPendingOpsStore } from '../../../knowledge-base/store';
+import { useToast } from '@/hooks/use-toast';
 
 function AllItemsSelectedToggler() {
   const { allItemsSelected, toggleAllItemsSelected } = useAllSelectedStore();
@@ -36,34 +43,62 @@ function AllItemsSelectedToggler() {
 }
 
 function GoogleDriveSectionContent() {
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useScrollAreaResizing();
+  const addPendingOps = useKbPendingOpsStore((state) => state.addPendingOps);
+  const removePendingOps = useKbPendingOpsStore(
+    (state) => state.removePendingOps,
+  );
+  const { data: connectionId } = useConnectionId();
+  const { data: profileData } = useProfile();
+  const { toast } = useToast();
+  const createKbMutation = useMutation({
+    mutationFn: async (selectedItems: string[]) => {
+      if (!connectionId) {
+        throw new Error('No connection ID found');
+      }
+      const kbId = await createKb(connectionId, selectedItems);
+      if (!profileData) {
+        throw new Error('No profile data found');
+      }
+      const syncResponse = await fetch(
+        `/integrations-api/knowledge-database/sync?knowledgeBaseId=${kbId}&orgId=${profileData.org_id}`,
+      );
+      if (!syncResponse.ok) {
+        throw new Error('Failed to sync knowledge base');
+      }
+      return kbId;
+    },
+  });
 
   const resetCurrentIntegration = useCurrentIntegrationStore(
     (state) => state.resetCurrentIntegration,
   );
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // retrieve the values from the form
     const formData = new FormData(e.target as HTMLFormElement);
-    const selectedItems = formData.getAll('selectedItems');
-    console.log(selectedItems);
-  };
-
-  useEffect(() => {
-    const scrollArea = scrollAreaRef.current;
-    if (!scrollArea) return;
-
-    const resizeObserver = new ResizeObserver(() => {
-      scrollArea.style.setProperty(
-        '--max-scroll-area',
-        `${scrollArea.clientHeight - 20}px`,
-      );
+    const selectedItems = Array.from(formData.getAll('selectedItems')).map(
+      String,
+    );
+    addPendingOps(
+      Object.fromEntries(selectedItems.map((item) => [item, 'add'])),
+    );
+    await createKbMutation.mutateAsync(selectedItems as string[], {
+      onError: (error) => {
+        toast({
+          title: 'Error creating knowledge base',
+          description: error.message,
+        });
+        removePendingOps(selectedItems);
+      },
     });
-
-    resizeObserver.observe(scrollArea);
-    return () => resizeObserver.disconnect();
-  }, []);
+    toast({
+      title: 'Knowledge base created',
+      description: 'Your knowledge base has been created and is being indexed',
+    });
+    resetCurrentIntegration();
+  };
 
   return (
     <form className="flex flex-1 flex-col" onSubmit={handleSubmit}>
@@ -79,19 +114,33 @@ function GoogleDriveSectionContent() {
         </TooltipProvider>
       </div>
       <DialogFooter className="mx-4 mt-auto items-center py-2 md:mx-6 md:py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
+        <div className="flex-1 py-2 text-center text-sm text-muted-foreground md:py-0 md:text-left">
           We recommend selecting as few items as needed.
         </div>
-        <div className="space-x-2">
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="lg"
             onClick={() => resetCurrentIntegration()}
+            disabled={!connectionId || createKbMutation.isPending}
           >
             Cancel
           </Button>
-          <Button size="lg" type="submit">
-            Select
+          <Button
+            size="lg"
+            type="submit"
+            disabled={
+              !connectionId || !profileData || createKbMutation.isPending
+            }
+          >
+            {profileData ? (
+              'Select'
+            ) : (
+              <>
+                <Loader2 className="animate-spin" />
+                Select
+              </>
+            )}
           </Button>
         </div>
       </DialogFooter>
