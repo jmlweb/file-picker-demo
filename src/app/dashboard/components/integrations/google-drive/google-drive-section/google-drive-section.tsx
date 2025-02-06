@@ -1,5 +1,5 @@
-import { useCurrentIntegrationStore } from '@/app/(dashboard)/store';
-import useProfile from '@/app/(dashboard)/use-profile';
+import { useCurrentIntegrationStore } from '@/app/dashboard/store';
+import useProfile from '@/app/dashboard/use-profile';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DialogFooter } from '@/components/ui/dialog';

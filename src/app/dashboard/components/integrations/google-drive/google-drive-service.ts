@@ -3,7 +3,7 @@ const BASE_URL = '/integrations-api/google-drive';
 import {
   connectionIdSchema,
   resourcesSchema,
-} from '@/app/(dashboard)/components/integrations/schemas';
+} from '@/app/dashboard/components/integrations/schemas';
 
 // API error handling
 function handleApiError(response: Response, defaultMessage: string): never {

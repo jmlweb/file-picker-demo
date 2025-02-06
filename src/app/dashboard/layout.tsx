@@ -1,11 +1,11 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { LogOut } from 'lucide-react';
 import { logoutAction } from '../logoutAction';
 import { TOKEN_COOKIE } from '@/config/server';
-import UserAvatar from './pods/profile/user-avatar';
 
 export default async function AuthLayout({
   children,
@@ -25,7 +25,10 @@ export default async function AuthLayout({
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <h1 className="text-2xl font-bold">StackAI</h1>
           <div className="flex items-center gap-4">
-            <UserAvatar />
+            <Avatar className="size-8">
+              <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
             <Button size="sm" onClick={logoutAction}>
               <LogOut className="h-5 w-5" />
               <span className="text-sm font-medium">Log out</span>

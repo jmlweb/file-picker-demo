@@ -1,9 +1,9 @@
 'use client';
 
-import { useCurrentIntegrationStore } from '@/app/(dashboard)/store';
+import { useCurrentIntegrationStore } from '@/app/dashboard/store';
 import { useCallback, useRef } from 'react';
 import dynamic from 'next/dynamic';
-import { INTEGRATION_NAMES } from '@/app/(dashboard)/config';
+import { INTEGRATION_NAMES } from '@/app/dashboard/config';
 
 const EnabledIntegrationsDialog = dynamic(
   () => import('./enabled-integrations-dialog'),

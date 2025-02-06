@@ -1,16 +1,9 @@
-import GoogleDriveCard from './components/integrations/google-drive/google-drive-card/google-drive-card';
-import IntegrationsDialog from './components/integrations/integrations-dialog/integrations-dialog';
-import DashboardProviders from './providers';
+import GoogleDriveCard from './components/google-drive-card/google-drive-card';
 
-export default function Home() {
+export default function DashboardPage() {
   return (
-    <DashboardProviders>
-      <>
-        <main className="container mx-auto flex flex-grow items-center justify-center px-4 py-8">
-          <GoogleDriveCard />
-        </main>
-        <IntegrationsDialog />
-      </>
-    </DashboardProviders>
+    <main className="container mx-auto flex flex-grow items-center justify-center px-4 py-8">
+      <GoogleDriveCard />
+    </main>
   );
 }

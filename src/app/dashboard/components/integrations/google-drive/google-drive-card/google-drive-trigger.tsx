@@ -1,9 +1,9 @@
 'use client';
 
-import { INTEGRATION_NAMES } from '@/app/(dashboard)/config';
+import { INTEGRATION_NAMES } from '@/app/dashboard/config';
 import useResources from '../use-resources';
 import { Button } from '@/components/ui/button';
-import { useCurrentIntegrationStore } from '@/app/(dashboard)/store';
+import { useCurrentIntegrationStore } from '@/app/dashboard/store';
 import useKbResources from '../../knowledge-base/use-kb-resources';
 import { useSearchParams } from 'next/navigation';
 
