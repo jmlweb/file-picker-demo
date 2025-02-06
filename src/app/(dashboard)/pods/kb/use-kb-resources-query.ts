@@ -18,7 +18,7 @@ const fetchKbResources = async (kbId: string) => {
   return kbResourcesSchema.parse(data);
 };
 
-export default function useKbResources(kbId: string) {
+export default function useKbResourcesQuery(kbId: string) {
   return useQuery({
     queryKey: ['kb-resources', kbId],
     queryFn: () => fetchKbResources(kbId),

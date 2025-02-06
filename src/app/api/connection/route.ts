@@ -32,8 +32,10 @@ export async function GET(request: NextRequest) {
       return new Response(response.statusText, { status: response.status });
     }
     const data = await response.json();
+    console.log(data);
     return Response.json({
       connection_id: data[0].connection_id,
+      name: data[0].name,
       org_id: data[0].org_id,
     });
   } catch (error) {

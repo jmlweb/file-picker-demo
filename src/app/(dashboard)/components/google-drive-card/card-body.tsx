@@ -15,24 +15,31 @@ import FilePicker from './file-picker/file-picker';
 import KbResources from '../kb-resources/kb-resources';
 
 export default function CardBody() {
-  const { data } = useKbs();
+  const { data, isLoading } = useKbs();
 
   const [selectedKb, setSelectedKb] = useState<string | null>(null);
 
+  const hasData = data && Object.entries(data).length > 0;
+
   return (
     <div className="flex flex-col gap-2">
-      <Select value={selectedKb ?? undefined} onValueChange={setSelectedKb}>
+      <Select
+        value={selectedKb ?? undefined}
+        onValueChange={setSelectedKb}
+        disabled={!hasData ? true : undefined}
+      >
         <SelectTrigger>
-          <SelectValue placeholder="Select a knowledge base" />
+          <SelectValue placeholder={hasData ? 'Select a knowledge base' : 'No knowledge bases found'} />
         </SelectTrigger>
-        <SelectContent>
-          {data &&
-            Object.entries(data).map(([id, { name }]) => (
+        {hasData && (
+          <SelectContent>
+            {Object.entries(data).map(([id, { name }]) => (
               <SelectItem key={id} value={id}>
                 {name}
               </SelectItem>
             ))}
-        </SelectContent>
+          </SelectContent>
+        )}
       </Select>
       {selectedKb ? (
         <KbResources kbId={selectedKb} />

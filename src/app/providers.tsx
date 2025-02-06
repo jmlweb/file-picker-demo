@@ -10,7 +10,7 @@ export function createQueryClient() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 1000 * 60 * 5, // 5 minutes
+        staleTime: 1000 * 60 * 2, // 2 minutes
         gcTime: 6 * 1000 * 60 * 60, // 6 hours
         retry: (failureCount, error) => {
           if (error.message === 'Unauthorized') {

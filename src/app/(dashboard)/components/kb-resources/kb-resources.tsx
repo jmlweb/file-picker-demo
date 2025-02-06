@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import useKbResources from '../../pods/kb/use-kb-resources';
+import useKbResourcesQuery from '../../pods/kb/use-kb-resources-query';
 import { AlertCircle, Trash } from 'lucide-react';
 
 import {
@@ -30,7 +30,7 @@ function formatFileSize(bytes: number | undefined): string {
 }
 
 export default function KbResources({ kbId }: { kbId: string }) {
-  const { data, error } = useKbResources(kbId);
+  const { data, error } = useKbResourcesQuery(kbId);
   if (error) {
     return (
       <Alert variant="destructive">

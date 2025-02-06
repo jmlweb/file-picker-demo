@@ -1,4 +1,4 @@
-import useConnectionQuery from '@/app/(dashboard)/pods/connection/use-connection-query';
+import useResourcesQuery from '@/app/(dashboard)/pods/resources/use-resources-query';
 import { Button } from '@/components/ui/button';
 import dynamic from 'next/dynamic';
 import { useCallback, useState } from 'react';
@@ -12,8 +12,8 @@ export default function FilePicker({
 }: {
   setSelectedKb: (kbId: string) => void;
 }) {
-  // prefetch gdrive connection ASAP
-  useConnectionQuery('gdrive');
+  // Preload root resources ASAP
+  useResourcesQuery('gdrive');
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClose = useCallback(() => {

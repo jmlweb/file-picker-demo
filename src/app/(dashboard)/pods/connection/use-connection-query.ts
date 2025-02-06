@@ -1,4 +1,12 @@
+import { z } from 'zod';
+
 import { useQuery } from '@tanstack/react-query';
+
+const connectionSchema = z.object({
+  connection_id: z.string(),
+  org_id: z.string(),
+  name: z.string(),
+});
 
 async function fetchConnection(provider: string) {
   const url = new URL('/api/connection', window.location.origin);
@@ -7,7 +15,7 @@ async function fetchConnection(provider: string) {
   if (!response.ok) {
     throw new Error(response.statusText);
   }
-  return response.json();
+  return connectionSchema.parse(await response.json());
 }
 
 export default function useConnectionQuery(provider: string) {
