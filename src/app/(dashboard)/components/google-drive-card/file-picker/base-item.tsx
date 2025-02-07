@@ -5,6 +5,8 @@ import { Checkbox as CheckboxComponent } from '@/components/ui/checkbox';
 
 import { type VariantProps } from 'class-variance-authority';
 import { formatFileSize } from '@/app/(dashboard)/pods/resources/utils';
+import { cn } from '@/lib/utils';
+import { useFilePickerStore } from './store';
 
 export const iconBaseClasses = 'h-[18px] min-h-[18px] w-[18px] min-w-[18px]';
 
@@ -25,33 +27,50 @@ type RootVariants = VariantProps<typeof root>;
 export function Root({
   children,
   isFolder,
-}: { children: ReactNode } & RootVariants) {
+  onClick,
+}: { children: ReactNode } & RootVariants & { onClick?: () => void }) {
   return (
-    <div className={root({ isFolder })}>
+    <div className={root({ isFolder })} onClick={onClick}>
       <div className="flex w-full items-center gap-2">{children}</div>
     </div>
   );
 }
 
 export function Checkbox({
-  checked,
   onCheckedChange,
+  level,
+  resourceId,
+  parentChecked,
 }: {
-  checked: boolean;
   onCheckedChange: (checked: boolean) => void;
+  level: number;
+  resourceId: string;
+  parentChecked: boolean;
 }) {
+  const isAllChecked = useFilePickerStore((state) => state.isCheckAllSelected) && level === 0;
+  const isChecked = useFilePickerStore((state) => state.ids.includes(resourceId));
+  const isDisabled = parentChecked;
   return (
-    <span className="nodrag relative group/checkbox -m-2 flex items-center justify-center rounded-lg p-2 transition hover:bg-gray-50 active:opacity-50">
+    <span className="nodrag group/checkbox relative z-10 -m-2 flex items-center justify-center rounded-lg p-2 transition hover:bg-gray-50 active:opacity-50">
       <CheckboxComponent
-        checked={checked}
+        checked={isAllChecked || parentChecked || isChecked}
         onCheckedChange={onCheckedChange}
-        className="group-hover/checkbox:opacity-100 group-active/checkbox:scale-90"
+        className={cn(
+          isDisabled ? 'opacity-50' : 'group-hover/checkbox:opacity-100 group-active/checkbox:scale-90'
+        )}
+        disabled={isDisabled}
       />
     </span>
   );
 }
 
-export function Separator({ level, isFolder }: { level: number; isFolder: boolean }) {
+export function Separator({
+  level,
+  isFolder,
+}: {
+  level: number;
+  isFolder: boolean;
+}) {
   return (
     <div
       className={!isFolder ? iconBaseClasses : undefined}
