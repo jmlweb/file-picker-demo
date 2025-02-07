@@ -15,7 +15,7 @@ import FilePicker from './file-picker/file-picker';
 import KbResources from '../kb-resources/kb-resources';
 
 export default function CardBody() {
-  const { data, isLoading } = useKbs();
+  const { data } = useKbs();
 
   const [selectedKb, setSelectedKb] = useState<string | null>(null);
 

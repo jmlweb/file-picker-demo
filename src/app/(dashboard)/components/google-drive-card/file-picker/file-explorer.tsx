@@ -4,10 +4,18 @@ import * as BaseItem from './base-item';
 import useResourcesQuery from '@/app/(dashboard)/pods/resources/use-resources-query';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Resource } from '@/app/(dashboard)/pods/resources/schemas';
-import { useEffect, useState } from 'react';
+import {
+  ComponentPropsWithoutRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { cn } from '@/lib/utils';
 import SkeletonItems from './skeleton-items';
 import { useFilePickerStore } from './store';
+import useSubscription from './useSubscription';
 
 const getResourceIcon = (fileName: string) => {
   const extension = fileName?.split('.').pop();
@@ -59,21 +67,34 @@ function DirectoryItem({
   level,
   resource,
   parentChecked,
+  parentSubscribe,
 }: {
   level: number;
   resource: Resource;
   parentChecked: boolean;
+  parentSubscribe?: ReturnType<typeof useSubscription>['subscribe'];
 }) {
   const { data } = useResourcesQuery('gdrive', resource.resource_id);
   const [isExpanded, setIsExpanded] = useState(false);
-  const isChecked = useFilePickerStore((state) =>
-    state.ids.includes(resource.resource_id),
-  );
+  // preload the first level
+  const hasBeenExpanded = useRef(level === 0);
   const updateIds = useFilePickerStore((state) => state.updateIds);
-  const childIds =
-    data?.filter((r) => r.inode_type === 'file').map((r) => r.resource_id) ??
-    [];
+  const childIds = useMemo(() => data?.map((r) => r.resource_id) ?? [], [data]);
   const FolderIcon = isExpanded ? FolderOpen : Folder;
+  const cb = useCallback((subIds: string[], isChecked: boolean) => {
+    if (isChecked) {
+      updateIds([resource.resource_id], subIds);
+    } else {
+      updateIds([], [resource.resource_id]);
+    }
+  }, [resource.resource_id, updateIds]);
+  const { subscribe, execute } = useSubscription(cb, parentSubscribe);
+  const onCheckedChange = useCallback((newValue: boolean) => {
+    execute(newValue);
+  }, [execute]);
+  useEffect(() => {
+    subscribe(childIds);
+  }, [childIds, subscribe]);
 
   return (
     <>
@@ -82,18 +103,15 @@ function DirectoryItem({
           level={level}
           resourceId={resource.resource_id}
           parentChecked={parentChecked}
-          onCheckedChange={(newValue) => {
-            if (newValue) {
-              updateIds([resource.resource_id], childIds);
-            } else {
-              updateIds([], [resource.resource_id, ...childIds]);
-            }
-          }}
+          onCheckedChange={onCheckedChange}
         />
-        <div className="flex w-full items-center gap-2 h-9" onClick={() => {
-          console.log('toggle', resource.resource_id, isExpanded ? 'close' : 'open');
-          setIsExpanded((prev) => !prev);
-        }}>
+        <div
+          className="flex h-9 w-full items-center gap-2"
+          onClick={() => {
+            setIsExpanded((prev) => !prev);
+            hasBeenExpanded.current = true;
+          }}
+        >
           <BaseItem.Separator level={level} isFolder />
           <span className="-m-0.5 flex items-center justify-center p-0">
             <ChevronRight
@@ -105,16 +123,22 @@ function DirectoryItem({
               )}
             />
           </span>
-          <FolderIcon width={18} height={18} className={BaseItem.iconBaseClasses} />
+          <FolderIcon
+            width={18}
+            height={18}
+            className={BaseItem.iconBaseClasses}
+          />
           <BaseItem.Name>{resource.inode_path.path}</BaseItem.Name>
           <BaseItem.Size>{resource.size}</BaseItem.Size>
         </div>
       </BaseItem.Root>
-      {isExpanded && (
-        <Resources
+      {(isExpanded || hasBeenExpanded.current) && (
+        <ParentResources
           parentId={resource.resource_id}
           level={level + 1}
-          parentChecked={parentChecked || isChecked}
+          parentChecked={parentChecked}
+          isExpanded={isExpanded}
+          parentSubscribe={subscribe}
         />
       )}
     </>
@@ -125,12 +149,20 @@ function Resources({
   parentId,
   level = 0,
   parentChecked = false,
+  isExpanded = false,
+  parentSubscribe,
 }: {
   parentId?: string;
   level?: number;
   parentChecked?: boolean;
+  isExpanded?: boolean;
+  parentSubscribe?: ReturnType<typeof useSubscription>['subscribe'];
 }) {
   const { data, error } = useResourcesQuery('gdrive', parentId);
+
+  if (!isExpanded) {
+    return null;
+  }
 
   if (error) {
     return (
@@ -155,6 +187,7 @@ function Resources({
             level={level}
             resource={resource}
             parentChecked={parentChecked}
+            parentSubscribe={parentSubscribe}
           />
         ) : (
           <FileItem
@@ -166,6 +199,27 @@ function Resources({
         ),
       )}
     </>
+  );
+}
+
+function ParentResources({
+  parentId,
+  level = 0,
+  parentChecked = false,
+  isExpanded,
+  parentSubscribe,
+}: ComponentPropsWithoutRef<typeof ResourcesComponent>) {
+  const isChecked = useFilePickerStore((state) =>
+    parentId ? state.ids.includes(parentId) : false,
+  );
+  return (
+    <Resources
+      parentId={parentId}
+      level={level}
+      parentChecked={parentChecked || isChecked}
+      isExpanded={isExpanded}
+      parentSubscribe={parentSubscribe}
+    />
   );
 }
 
@@ -182,7 +236,7 @@ export default function FileExplorer({
   }, [reset]);
   return (
     <div className="relative flex min-h-max flex-col gap-1 rounded-b-lg border border-t-0 border-border bg-background p-1">
-      <Resources />
+      <ParentResources isExpanded />
     </div>
   );
 }
