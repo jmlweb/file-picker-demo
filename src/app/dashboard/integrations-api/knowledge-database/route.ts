@@ -89,7 +89,6 @@ export async function GET(request: NextRequest) {
       Authorization: `Bearer ${token}`,
     },
   });
-  console.log(response);
   if (!response.ok) {
     return new Response(response.statusText, { status: response.status });
   }

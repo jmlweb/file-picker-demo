@@ -90,7 +90,10 @@ function DirectoryItem({
             }
           }}
         />
-        <div className="flex w-full items-center gap-2" onClick={() => setIsExpanded((prev) => !prev)}>
+        <div className="flex w-full items-center gap-2 h-9" onClick={() => {
+          console.log('toggle', resource.resource_id, isExpanded ? 'close' : 'open');
+          setIsExpanded((prev) => !prev);
+        }}>
           <BaseItem.Separator level={level} isFolder />
           <span className="-m-0.5 flex items-center justify-center p-0">
             <ChevronRight

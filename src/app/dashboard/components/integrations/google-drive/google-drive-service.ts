@@ -39,6 +39,5 @@ export async function fetchResources(connectionId: string, parentId?: string) {
   }
 
   const data = await response.json();
-  console.log(data);
   return resourcesSchema.parse(data);
 }

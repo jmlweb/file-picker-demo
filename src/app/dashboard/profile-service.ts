@@ -16,6 +16,5 @@ export async function getProfile(): Promise<Profile> {
     );
   }
   const data = await response.json();
-  console.log('data', data);
   return profileSchema.parse(data);
 }
