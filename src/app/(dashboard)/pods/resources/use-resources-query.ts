@@ -15,7 +15,7 @@ const fetchResources = async (connectionId: string, parentId?: string) => {
   return resourcesSchema.parse(data);
 };
 
-export default function useResourcesQuery(provider: string, parentId?: string) {
+export default function useResourcesQuery(provider: 'gdrive', parentId?: string) {
   const { data: connectionData } = useConnectionQuery(provider);
   return useQuery({
     queryKey: ['resources', connectionData?.connection_id, parentId],

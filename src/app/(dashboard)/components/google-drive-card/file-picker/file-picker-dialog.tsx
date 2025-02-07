@@ -36,9 +36,8 @@ export default function FilePickerDialog({
   open,
   onClose,
   onSubmit,
-}: Omit<ComponentPropsWithoutRef<typeof DialogLayout>, 'children'> & {
-  onSubmit: (kbId: string) => void;
-}) {
+}: Omit<ComponentPropsWithoutRef<typeof DialogLayout>, 'children'> &
+  ComponentPropsWithoutRef<typeof FileExplorer>) {
   const [isCheckAllSelected, setIsCheckAllSelected] = useState(false);
   return (
     <DialogLayout open={open} onClose={onClose}>
@@ -48,7 +47,7 @@ export default function FilePickerDialog({
             isCheckAllSelected={isCheckAllSelected}
             setIsCheckAllSelected={setIsCheckAllSelected}
           />
-          <FileExplorer />
+          <FileExplorer onSubmit={onSubmit} />
         </div>
         <ScrollBar orientation="vertical" className="z-10" />
       </ScrollArea>
