@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef, useMemo, useState } from 'react';
+import { ComponentPropsWithoutRef, useMemo } from 'react';
 import DialogLayout from './dialog-layout';
 import { ScrollBar, ScrollArea } from '@/components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -7,6 +7,7 @@ import { useFilePickerStore } from './store';
 import useResourcesQuery from '@/app/(dashboard)/pods/resources/use-resources-query';
 import { Button } from '@/components/ui/button';
 import { DialogFooter } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 
 function Header() {
   const isCheckAllSelected = useFilePickerStore(
@@ -47,14 +48,26 @@ function Header() {
 }
 
 function Footer() {
-  const ids = useFilePickerStore((state) => state.ids);
+  const idsLength = useFilePickerStore((state) => state.ids.length);
   return (
-    <DialogFooter className="absolute inset-x-0 bottom-0 z-50 flex items-center justify-end gap-5 border-t border-border bg-background/50 p-4 backdrop-blur-md md:p-6">
-      <p>
-        <strong className="font-semibold">{ids.length}</strong> files selected
-      </p>
-      <Button disabled={ids.length === 0}>Create Knowledge Base</Button>
-    </DialogFooter>
+    <div
+      className={cn(
+        'absolute inset-x-0 bottom-0 z-50 overflow-hidden rounded-b-3xl bg-transparent duration-300 transition-opacity',
+        idsLength === 0 && 'pointer-events-none opacity-0',
+      )}
+    >
+      <DialogFooter
+        className={cn(
+          'flex items-center justify-end gap-5 border-t border-border bg-background/40 p-4 backdrop-blur-md transition duration-300 md:p-6',
+          idsLength === 0 && 'translate-y-12',
+        )}
+      >
+        <p>
+          <strong className="font-semibold">{idsLength}</strong> files selected
+        </p>
+        <Button disabled={idsLength === 0}>Create Knowledge Base</Button>
+      </DialogFooter>
+    </div>
   );
 }
 

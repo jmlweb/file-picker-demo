@@ -208,7 +208,7 @@ function ParentResources({
   parentChecked = false,
   isExpanded,
   parentSubscribe,
-}: ComponentPropsWithoutRef<typeof ResourcesComponent>) {
+}: ComponentPropsWithoutRef<typeof Resources>) {
   const isChecked = useFilePickerStore((state) =>
     parentId ? state.ids.includes(parentId) : false,
   );
@@ -217,7 +217,7 @@ function ParentResources({
       parentId={parentId}
       level={level}
       parentChecked={parentChecked || isChecked}
-      isExpanded={isExpanded}
+      isExpanded={isExpanded || level === 0}
       parentSubscribe={parentSubscribe}
     />
   );
@@ -235,8 +235,8 @@ export default function FileExplorer({
     };
   }, [reset]);
   return (
-    <div className="relative flex min-h-max flex-col gap-1 rounded-b-lg border border-t-0 border-border bg-background p-1">
-      <ParentResources isExpanded />
+    <div className="relative flex min-h-max flex-col gap-1 rounded-b-lg border border-t-0 border-border bg-background p-1 pb-20">
+      <ParentResources />
     </div>
   );
 }

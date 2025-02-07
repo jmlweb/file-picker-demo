@@ -51,7 +51,7 @@ export function Checkbox({
   const isChecked = useFilePickerStore((state) => state.ids.includes(resourceId));
   const isDisabled = parentChecked;
   return (
-    <span className="nodrag group/checkbox relative z-10 -m-2 flex items-center justify-center rounded-lg p-2 transition hover:bg-gray-50 active:opacity-50">
+    <span className="nodrag group/checkbox relative -m-2 flex items-center justify-center rounded-lg p-2 transition hover:bg-gray-50 active:opacity-50">
       <CheckboxComponent
         checked={isAllChecked || parentChecked || isChecked}
         onCheckedChange={onCheckedChange}
