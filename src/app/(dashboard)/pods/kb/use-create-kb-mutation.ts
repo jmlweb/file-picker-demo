@@ -6,7 +6,6 @@ import { useMutation } from '@tanstack/react-query';
 const kbSchema = z.object({
   knowledge_base_id: z.string(),
   name: z.string(),
-  description: z.string().datetime(),
   updated_at: z.string().datetime(),
 });
 
@@ -20,7 +19,7 @@ type Payload = {
 };
 
 export async function createKb(payload: Payload): Promise<KbSchema> {
-  const response = await fetch('/integrations-api/knowledge-database', {
+  const response = await fetch('/api/kb', {
     method: 'POST',
     body: JSON.stringify(payload),
   });
@@ -53,7 +52,6 @@ export default function useCreateKbMutation(provider: 'gdrive') {
       const newData = {
         knowledge_base_id: data.knowledge_base_id,
         name: data.name,
-        description: data.description,
         updated_at: data.updated_at,
       };
       if (!rawKbs) {

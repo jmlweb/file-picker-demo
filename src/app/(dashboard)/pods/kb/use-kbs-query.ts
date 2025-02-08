@@ -7,7 +7,6 @@ const kbsSchema = z.array(
   z.object({
     knowledge_base_id: z.string(),
     name: z.string(),
-    description: z.string(),
     updated_at: z.string(),
   }),
 );
@@ -43,7 +42,6 @@ export function useRefreshKbsQuery() {
     (kbData?: {
       knowledge_base_id: string;
       name: string;
-      description: string;
       updated_at: string;
     }) => {
       if (kbData) {
@@ -53,7 +51,6 @@ export function useRefreshKbsQuery() {
             {
               knowledge_base_id: kbData.knowledge_base_id,
               name: kbData.name,
-              description: kbData.description,
               updated_at: kbData.updated_at,
             },
           ];
