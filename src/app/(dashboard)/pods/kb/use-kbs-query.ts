@@ -2,14 +2,9 @@ import { z } from 'zod';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
+import { KbSchema, kbSchema } from './schemas';
 
-const kbsSchema = z.array(
-  z.object({
-    knowledge_base_id: z.string(),
-    name: z.string(),
-    updated_at: z.string(),
-  }),
-);
+const kbsSchema = z.array(kbSchema);
 
 export type Kbs = z.infer<typeof kbsSchema>;
 
@@ -39,11 +34,7 @@ export default function useKbsQuery() {
 export function useRefreshKbsQuery() {
   const queryClient = useQueryClient();
   return useCallback(
-    (kbData?: {
-      knowledge_base_id: string;
-      name: string;
-      updated_at: string;
-    }) => {
+    (kbData?: KbSchema) => {
       if (kbData) {
         queryClient.setQueryData(['kbs'], (old: Kbs) => {
           return [

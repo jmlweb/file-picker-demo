@@ -38,7 +38,7 @@ export default function FilePicker({
     }
     createKbMutation.mutate(
       {
-        name: 'Test Knowledge Base',
+        name: `Test Knowledge Base ${new Date().toLocaleString()}`,
         description: 'This is a test knowledge base',
         connection_source_ids: ids,
       },

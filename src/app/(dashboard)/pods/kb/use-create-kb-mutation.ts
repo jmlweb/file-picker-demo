@@ -1,15 +1,6 @@
-import { z } from 'zod';
-
 import useConnectionQuery from '../connection/use-connection-query';
 import { useMutation } from '@tanstack/react-query';
-
-const kbSchema = z.object({
-  knowledge_base_id: z.string(),
-  name: z.string(),
-  updated_at: z.string().datetime(),
-});
-
-export type KbSchema = z.infer<typeof kbSchema>;
+import { kbSchema, KbSchema } from './schemas';
 
 type Payload = {
   connection_id: string;
