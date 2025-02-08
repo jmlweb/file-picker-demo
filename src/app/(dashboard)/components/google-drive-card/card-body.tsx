@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import {
   Select,
@@ -16,11 +16,14 @@ import KbResources from '../kb-resources/kb-resources';
 
 export default function CardBody() {
   const { data } = useKbsQuery();
-
+  const [isMounted, setIsMounted] = useState(false);
   const [selectedKb, setSelectedKb] = useState<string | null>(null);
 
-  const hasData = data !== undefined && data.length > 0;
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
+  const hasData = isMounted && data !== undefined && data.length > 0;
   return (
     <div className="flex flex-col gap-2">
       <Select

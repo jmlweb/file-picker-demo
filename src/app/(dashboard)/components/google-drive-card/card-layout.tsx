@@ -13,6 +13,7 @@ export default function CardLayout({ children }: { children: ReactNode }) {
             width={24}
             height={24}
             className="size-6"
+            priority
           />
           Google Drive
         </CardTitle>

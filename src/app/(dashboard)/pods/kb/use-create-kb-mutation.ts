@@ -1,6 +1,16 @@
-import mock from '@/mocks/createKnowledgeDB.json';
+import { z } from 'zod';
+
 import useConnectionQuery from '../connection/use-connection-query';
 import { useMutation } from '@tanstack/react-query';
+
+const kbSchema = z.object({
+  knowledge_base_id: z.string(),
+  name: z.string(),
+  description: z.string().datetime(),
+  updated_at: z.string().datetime(),
+});
+
+export type KbSchema = z.infer<typeof kbSchema>;
 
 type Payload = {
   connection_id: string;
@@ -9,14 +19,20 @@ type Payload = {
   connection_source_ids: string[];
 };
 
-function createKb(payload: Payload): Promise<typeof mock> {
-  return new Promise((resolve) => {
-    console.log(payload);
-    setTimeout(() => {
-      console.log(mock);
-      resolve(mock);
-    }, 1000);
+export async function createKb(payload: Payload): Promise<KbSchema> {
+  const response = await fetch('/integrations-api/knowledge-database', {
+    method: 'POST',
+    body: JSON.stringify(payload),
   });
+  if (!response.ok) {
+    throw new Error(
+      response.statusText === 'UNAUTHORIZED'
+        ? response.statusText
+        : 'Internal Server Error',
+    );
+  }
+  const data = await response.json();
+  return kbSchema.parse(data);
 }
 
 export default function useCreateKbMutation(provider: 'gdrive') {
