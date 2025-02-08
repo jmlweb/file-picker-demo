@@ -15,9 +15,7 @@ import FilePicker from './file-picker/file-picker';
 import KbResources from '../kb-resources/kb-resources';
 
 export default function CardBody() {
-  const { data, promise } = useKbsQuery();
-
-  console.log(promise);
+  const { data } = useKbsQuery();
 
   const [selectedKb, setSelectedKb] = useState<string | null>(null);
 
