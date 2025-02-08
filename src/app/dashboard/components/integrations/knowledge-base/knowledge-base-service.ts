@@ -2,13 +2,12 @@ import { z } from 'zod';
 
 import { resourcesSchema } from '../schemas';
 
-const kbSchema = z
-  .object({
-    knowledge_base_id: z.string(),
-    name: z.string(),
-    description: z.string().datetime(),
-    created_at: z.string().datetime(),
-  });
+const kbSchema = z.object({
+  knowledge_base_id: z.string(),
+  name: z.string(),
+  description: z.string().datetime(),
+  created_at: z.string().datetime(),
+});
 
 export type KbSchema = z.infer<typeof kbSchema>;
 

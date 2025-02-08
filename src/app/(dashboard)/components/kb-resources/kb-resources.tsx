@@ -1,7 +1,9 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import useKbResourcesQuery from '../../pods/kb/use-kb-resources-query';
 import { AlertCircle, Trash } from 'lucide-react';
+import useKbResourcesQuery from '../../pods/kb/use-kb-resources-query';
 
+import { formatFileSize } from '@/app/(dashboard)/pods/resources/utils';
+import { Button } from '@/components/ui/button';
 import {
   Table,
   TableBody,
@@ -15,9 +17,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { formatFileSize } from '@/app/(dashboard)/pods/resources/utils';
+import clsx from 'clsx';
 
 export default function KbResources({ kbId }: { kbId: string }) {
   const { data, error } = useKbResourcesQuery(kbId);
@@ -47,7 +47,9 @@ export default function KbResources({ kbId }: { kbId: string }) {
         {data.map((resource) => (
           <TableRow key={resource.resource_id}>
             <TableCell>{resource.dataloader_metadata.path}</TableCell>
-            <TableCell className="text-right">{formatFileSize(resource.size)}</TableCell>
+            <TableCell className="text-right">
+              {formatFileSize(resource.size)}
+            </TableCell>
             <TableCell className="text-center">{resource.status}</TableCell>
             <TableCell>
               <Tooltip>
@@ -56,7 +58,7 @@ export default function KbResources({ kbId }: { kbId: string }) {
                     variant="ghost"
                     size="icon"
                     type="button"
-                    className={cn('-m-1 mr-1 h-6 w-6 text-muted-foreground', {
+                    className={clsx('-m-1 mr-1 h-6 w-6 text-muted-foreground', {
                       'opacity-50': false,
                     })}
                   >

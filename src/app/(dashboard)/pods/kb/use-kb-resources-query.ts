@@ -1,13 +1,16 @@
 import { z } from 'zod';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { resourcesSchema } from '../resources/schemas';
+import { useCallback } from 'react';
 
 const kbResourcesSchema = z
   .object({
     data: resourcesSchema,
   })
-  .transform(({ data }) => data.filter((resource) => resource.inode_type === 'file'));
+  .transform(({ data }) =>
+    data.filter((resource) => resource.inode_type === 'file'),
+  );
 
 const fetchKbResources = async (kbId: string) => {
   const res = await fetch(`/api/kb/${kbId}/resources`);
@@ -23,4 +26,17 @@ export default function useKbResourcesQuery(kbId: string) {
     queryKey: ['kb-resources', kbId],
     queryFn: () => fetchKbResources(kbId),
   });
+}
+
+export function usePrefetchKbResourcesQuery() {
+  const queryClient = useQueryClient();
+  return useCallback(
+    (kbId: string) => {
+      queryClient.prefetchQuery({
+        queryKey: ['kb-resources', kbId],
+        queryFn: () => fetchKbResources(kbId),
+      });
+    },
+    [queryClient],
+  );
 }

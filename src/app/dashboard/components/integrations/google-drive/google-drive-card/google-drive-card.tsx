@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GoogleDriveTrigger from './google-drive-trigger';
 import useResources from '../use-resources';
 

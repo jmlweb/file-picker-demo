@@ -3,9 +3,9 @@ import { ReactNode } from 'react';
 
 import { Checkbox as CheckboxComponent } from '@/components/ui/checkbox';
 
-import { type VariantProps } from 'class-variance-authority';
 import { formatFileSize } from '@/app/(dashboard)/pods/resources/utils';
-import { cn } from '@/lib/utils';
+import { type VariantProps } from 'class-variance-authority';
+import clsx from 'clsx';
 import { useFilePickerStore } from './store';
 
 export const iconBaseClasses = 'h-[18px] min-h-[18px] w-[18px] min-w-[18px]';
@@ -47,16 +47,21 @@ export function Checkbox({
   resourceId: string;
   parentChecked: boolean;
 }) {
-  const isAllChecked = useFilePickerStore((state) => state.isCheckAllSelected) && level === 0;
-  const isChecked = useFilePickerStore((state) => state.ids.includes(resourceId));
+  const isAllChecked =
+    useFilePickerStore((state) => state.isCheckAllSelected) && level === 0;
+  const isChecked = useFilePickerStore((state) =>
+    state.ids.includes(resourceId),
+  );
   const isDisabled = parentChecked;
   return (
     <span className="nodrag group/checkbox relative -m-2 flex items-center justify-center rounded-lg p-2 transition hover:bg-gray-50 active:opacity-50">
       <CheckboxComponent
         checked={isAllChecked || parentChecked || isChecked}
         onCheckedChange={onCheckedChange}
-        className={cn(
-          isDisabled ? 'opacity-50' : 'group-hover/checkbox:opacity-100 group-active/checkbox:scale-90'
+        className={clsx(
+          isDisabled
+            ? 'opacity-50'
+            : 'group-hover/checkbox:opacity-100 group-active/checkbox:scale-90',
         )}
         disabled={isDisabled}
       />

@@ -1,22 +1,22 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import useResources from '../use-resources';
-import { AlertCircle, ExternalLink, Trash } from 'lucide-react';
-import { fetchResources, type Resource } from '../google-drive-service';
-import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronRight } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useAllSelectedStore, useUncheckStore } from './store';
-import { cva } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 import { useQueryClient } from '@tanstack/react-query';
+import { cva } from 'class-variance-authority';
+import clsx from 'clsx';
+import { AlertCircle, ChevronRight, ExternalLink, Trash } from 'lucide-react';
+import Image from 'next/image';
+import { useCallback, useEffect, useState } from 'react';
+import { fetchResources, type Resource } from '../google-drive-service';
 import useConnectionId from '../use-connection-id';
+import useResources from '../use-resources';
+import { useAllSelectedStore, useUncheckStore } from './store';
 
 const DEFAULT_KNOWLEDGE_ID = '00000000-0000-0000-0000-000000000000';
 
@@ -105,7 +105,7 @@ function ResourceCheckbox({
   return (
     <>
       <Checkbox
-        className={cn('mr-2 border-muted-foreground/40', {
+        className={clsx('mr-2 border-muted-foreground/40', {
           'opacity-50': parentChecked,
         })}
         checked={allItemsSelected || isChecked || parentChecked}
@@ -132,7 +132,7 @@ function ResourceRemoveButton({ resource }: { resource: Resource }) {
           variant="ghost"
           size="icon"
           type="button"
-          className={cn('-m-1 mr-1 h-6 w-6 text-muted-foreground', {
+          className={clsx('-m-1 mr-1 h-6 w-6 text-muted-foreground', {
             'opacity-50': false,
           })}
         >

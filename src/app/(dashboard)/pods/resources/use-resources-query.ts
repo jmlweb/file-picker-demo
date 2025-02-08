@@ -3,7 +3,10 @@ import { resourcesSchema } from './schemas';
 import useConnectionQuery from '../connection/use-connection-query';
 
 const fetchResources = async (connectionId: string, parentId?: string) => {
-  const url = new URL(`/api/connection/${connectionId}/resources`, window.location.origin);
+  const url = new URL(
+    `/api/connection/${connectionId}/resources`,
+    window.location.origin,
+  );
   if (parentId) {
     url.searchParams.set('parent_id', parentId);
   }
@@ -15,16 +18,20 @@ const fetchResources = async (connectionId: string, parentId?: string) => {
   return resourcesSchema.parse(data);
 };
 
-export default function useResourcesQuery(provider: 'gdrive', parentId?: string) {
+export default function useResourcesQuery(
+  provider: 'gdrive',
+  parentId?: string,
+) {
   const { data: connectionData } = useConnectionQuery(provider);
+  const connectionId = connectionData?.connection_id;
   return useQuery({
-    queryKey: ['resources', connectionData?.connection_id, parentId],
+    queryKey: ['resources', connectionId, parentId],
     queryFn: () => {
-      if (!connectionData) {
-        throw new Error('Connection data not found');
+      if (!connectionId) {
+        throw new Error('Connection id not found');
       }
-      return fetchResources(connectionData.connection_id, parentId);
+      return fetchResources(connectionId, parentId);
     },
-    enabled: !!connectionData,
+    enabled: !!connectionId,
   });
 }

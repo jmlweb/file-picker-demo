@@ -10,9 +10,7 @@ export type Profile = z.infer<typeof profileSchema>;
 export async function getProfile(): Promise<Profile> {
   const response = await fetch('/api/profile');
   if (!response.ok) {
-    throw new Error(
-      response.statusText,
-    );
+    throw new Error(response.statusText);
   }
   const data = await response.json();
   return profileSchema.parse(data);

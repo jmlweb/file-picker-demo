@@ -1,21 +1,22 @@
-import { AlertCircle, ChevronRight, Folder, FolderOpen } from 'lucide-react';
-import Image from 'next/image';
-import * as BaseItem from './base-item';
+import { Resource } from '@/app/(dashboard)/pods/resources/schemas';
 import useResourcesQuery from '@/app/(dashboard)/pods/resources/use-resources-query';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Resource } from '@/app/(dashboard)/pods/resources/schemas';
+import clsx from 'clsx';
+import { AlertCircle, ChevronRight, Folder, FolderOpen } from 'lucide-react';
+import Image from 'next/image';
 import {
   ComponentPropsWithoutRef,
+  memo,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
-import { cn } from '@/lib/utils';
+import * as BaseItem from './base-item';
 import SkeletonItems from './skeleton-items';
 import { useFilePickerStore } from './store';
-import useSubscription from './useSubscription';
+import useSubscription from './use-subscription';
 
 const getResourceIcon = (fileName: string) => {
   const extension = fileName?.split('.').pop();
@@ -81,17 +82,23 @@ function DirectoryItem({
   const updateIds = useFilePickerStore((state) => state.updateIds);
   const childIds = useMemo(() => data?.map((r) => r.resource_id) ?? [], [data]);
   const FolderIcon = isExpanded ? FolderOpen : Folder;
-  const cb = useCallback((subIds: string[], isChecked: boolean) => {
-    if (isChecked) {
-      updateIds([resource.resource_id], subIds);
-    } else {
-      updateIds([], [resource.resource_id]);
-    }
-  }, [resource.resource_id, updateIds]);
+  const cb = useCallback(
+    (subIds: string[], isChecked: boolean) => {
+      if (isChecked) {
+        updateIds([resource.resource_id], subIds);
+      } else {
+        updateIds([], [resource.resource_id]);
+      }
+    },
+    [resource.resource_id, updateIds],
+  );
   const { subscribe, execute } = useSubscription(cb, parentSubscribe);
-  const onCheckedChange = useCallback((newValue: boolean) => {
-    execute(newValue);
-  }, [execute]);
+  const onCheckedChange = useCallback(
+    (newValue: boolean) => {
+      execute(newValue);
+    },
+    [execute],
+  );
   useEffect(() => {
     subscribe(childIds);
   }, [childIds, subscribe]);
@@ -117,7 +124,7 @@ function DirectoryItem({
             <ChevronRight
               width={18}
               height={18}
-              className={cn(
+              className={clsx(
                 'opacity-100 transition-transform',
                 isExpanded ? 'rotate-90' : 'rotate-0',
               )}
@@ -217,17 +224,13 @@ function ParentResources({
       parentId={parentId}
       level={level}
       parentChecked={parentChecked || isChecked}
-      isExpanded={isExpanded || level === 0}
+      isExpanded={isExpanded || level === 0}
       parentSubscribe={parentSubscribe}
     />
   );
 }
 
-export default function FileExplorer({
-  onSubmit,
-}: {
-  onSubmit: (kbId: string) => void;
-}) {
+function FileExplorer() {
   const reset = useFilePickerStore((state) => state.reset);
   useEffect(() => {
     return () => {
@@ -240,3 +243,5 @@ export default function FileExplorer({
     </div>
   );
 }
+
+export default memo(FileExplorer);

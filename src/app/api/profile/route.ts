@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       org_id: data.org_id,
       org_name: data.org_name,
     });
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return new Response('Internal Server Error', { status: 500 });
   }

@@ -1,21 +1,26 @@
 'use client';
 
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { QueryClient, QueryClientProvider, QueryCache } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  QueryCache,
+  isServer,
+} from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { ReactNode } from 'react';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
-export function createQueryClient() {
+function createQueryClient() {
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 1000 * 30, // 30 seconds
-        gcTime: 6 * 1000 * 60 * 60, // 6 hours
+        staleTime: 1000 * 60, // 1 minute
+        gcTime: 1 * 1000 * 60 * 60, // 1 hour
         retry: (failureCount, error) => {
           if (error.message === 'Unauthorized') {
             return false;
-          };
+          }
           return failureCount < 3;
         },
       },
@@ -30,7 +35,7 @@ export function createQueryClient() {
   });
 
   // Only run persister in browser environment
-  if (typeof window !== 'undefined') {
+  if (!isServer) {
     const persister = createSyncStoragePersister({
       storage: window.sessionStorage,
     });
@@ -38,7 +43,7 @@ export function createQueryClient() {
     persistQueryClient({
       queryClient,
       persister,
-      maxAge: 6 * 1000 * 60 * 60, // 6 hours
+      maxAge: 1 * 1000 * 60 * 60, // 1 hour
       buster: process.env.NEXT_PUBLIC_APP_VERSION, // Optional cache buster
     });
   }
@@ -46,14 +51,26 @@ export function createQueryClient() {
   return queryClient;
 }
 
+let browserQueryClient: QueryClient | undefined = undefined;
+
+function getQueryClient() {
+  if (isServer) {
+    // Server: always make a new query client
+    return createQueryClient();
+  } else {
+    if (!browserQueryClient) {
+      browserQueryClient = createQueryClient();
+    }
+    return browserQueryClient;
+  }
+}
+
 export default function Providers({ children }: { children: ReactNode }) {
-  const queryClient = createQueryClient();
+  const queryClient = getQueryClient();
 
   return (
     <TooltipProvider>
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </TooltipProvider>
   );
 }

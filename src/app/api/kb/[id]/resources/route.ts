@@ -9,11 +9,12 @@ export async function GET(
   if (!token) {
     return new Response('Unauthorized', { status: 401 });
   }
-  const knowledgeBaseId =  (await params).id;
+  const knowledgeBaseId = (await params).id;
   const url = new URL(
     `${backendURL}/knowledge_bases/${knowledgeBaseId}/resources/children`,
   );
-  url.searchParams.set('resource_path', '/');
+  const resourcePath = request.nextUrl.searchParams.get('resource_path') ?? '/';
+  url.searchParams.set('resource_path', resourcePath);
   const response = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,

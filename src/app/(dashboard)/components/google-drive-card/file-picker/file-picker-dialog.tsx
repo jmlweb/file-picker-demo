@@ -1,13 +1,14 @@
-import { ComponentPropsWithoutRef, useMemo } from 'react';
-import DialogLayout from './dialog-layout';
-import { ScrollBar, ScrollArea } from '@/components/ui/scroll-area';
-import { Checkbox } from '@/components/ui/checkbox';
-import FileExplorer from './file-explorer';
-import { useFilePickerStore } from './store';
 import useResourcesQuery from '@/app/(dashboard)/pods/resources/use-resources-query';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { DialogFooter } from '@/components/ui/dialog';
-import { cn } from '@/lib/utils';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import clsx from 'clsx';
+import { Loader2 } from 'lucide-react';
+import { ComponentPropsWithoutRef, useMemo } from 'react';
+import DialogLayout from './dialog-layout';
+import FileExplorer from './file-explorer';
+import { useFilePickerStore } from './store';
 
 function Header() {
   const isCheckAllSelected = useFilePickerStore(
@@ -47,17 +48,23 @@ function Header() {
   );
 }
 
-function Footer() {
+function Footer({
+  onSubmit,
+  isPending,
+}: {
+  onSubmit: () => void;
+  isPending: boolean;
+}) {
   const idsLength = useFilePickerStore((state) => state.ids.length);
   return (
     <div
-      className={cn(
-        'absolute inset-x-0 bottom-0 z-50 overflow-hidden rounded-b-3xl bg-transparent duration-300 transition-opacity',
+      className={clsx(
+        'absolute inset-x-0 bottom-0 z-50 overflow-hidden rounded-b-3xl bg-transparent transition-opacity duration-300',
         idsLength === 0 && 'pointer-events-none opacity-0',
       )}
     >
       <DialogFooter
-        className={cn(
+        className={clsx(
           'flex items-center justify-end gap-5 border-t border-border bg-background/40 p-4 backdrop-blur-md transition duration-300 md:p-6',
           idsLength === 0 && 'translate-y-12',
         )}
@@ -65,7 +72,23 @@ function Footer() {
         <p>
           <strong className="font-semibold">{idsLength}</strong> files selected
         </p>
-        <Button disabled={idsLength === 0}>Create Knowledge Base</Button>
+        <Button
+          disabled={idsLength === 0 || isPending}
+          onClick={onSubmit}
+          className="relative"
+        >
+          <span
+            className={clsx(
+              'transition-opacity',
+              isPending ? 'opacity-0' : 'opacity-100',
+            )}
+          >
+            Create Knowledge Base
+          </span>
+          {isPending && (
+            <Loader2 className="absolute ml-2 h-4 w-4 animate-spin" />
+          )}
+        </Button>
       </DialogFooter>
     </div>
   );
@@ -75,18 +98,20 @@ export default function FilePickerDialog({
   open,
   onClose,
   onSubmit,
+  isPending,
 }: Omit<ComponentPropsWithoutRef<typeof DialogLayout>, 'children'> &
-  ComponentPropsWithoutRef<typeof FileExplorer>) {
+  ComponentPropsWithoutRef<typeof FileExplorer> &
+  ComponentPropsWithoutRef<typeof Footer>) {
   return (
     <DialogLayout open={open} onClose={onClose}>
       <ScrollArea className="max-h-full">
         <div className="flex min-h-max flex-col px-1">
           <Header />
-          <FileExplorer onSubmit={onSubmit} />
+          <FileExplorer />
         </div>
         <ScrollBar orientation="vertical" className="z-10" />
       </ScrollArea>
-      <Footer />
+      <Footer onSubmit={onSubmit} isPending={isPending} />
     </DialogLayout>
   );
 }

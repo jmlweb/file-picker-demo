@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function CardLayout({ children }: { children: ReactNode }) {
   return (
-    <Card className="mx-auto max-w-full w-[600px]">
+    <Card className="mx-auto w-[600px] max-w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Image
@@ -13,7 +13,7 @@ export default function CardLayout({ children }: { children: ReactNode }) {
             width={24}
             height={24}
             className="size-6"
-          /> 
+          />
           Google Drive
         </CardTitle>
       </CardHeader>

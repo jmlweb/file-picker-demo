@@ -10,16 +10,18 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import useKbs from '@/app/(dashboard)/pods/kb/use-kbs';
+import useKbsQuery from '@/app/(dashboard)/pods/kb/use-kbs-query';
 import FilePicker from './file-picker/file-picker';
 import KbResources from '../kb-resources/kb-resources';
 
 export default function CardBody() {
-  const { data } = useKbs();
+  const { data, promise } = useKbsQuery();
+
+  console.log(promise);
 
   const [selectedKb, setSelectedKb] = useState<string | null>(null);
 
-  const hasData = data && Object.entries(data).length > 0;
+  const hasData = data !== undefined && data.length > 0;
 
   return (
     <div className="flex flex-col gap-2">
@@ -29,13 +31,20 @@ export default function CardBody() {
         disabled={!hasData ? true : undefined}
       >
         <SelectTrigger>
-          <SelectValue placeholder={hasData ? 'Select a knowledge base' : 'No knowledge bases found'} />
+          <SelectValue
+            placeholder={
+              hasData ? 'Select a knowledge base' : 'No knowledge bases found'
+            }
+          />
         </SelectTrigger>
         {hasData && (
           <SelectContent>
-            {Object.entries(data).map(([id, { name }]) => (
-              <SelectItem key={id} value={id}>
-                {name}
+            {data.map((item) => (
+              <SelectItem
+                key={item.knowledge_base_id}
+                value={item.knowledge_base_id}
+              >
+                {item.name}
               </SelectItem>
             ))}
           </SelectContent>

@@ -85,7 +85,7 @@ function GoogleDriveSectionContent() {
     addPendingOps(
       Object.fromEntries(selectedItems.map((item) => [item, 'add'])),
     );
-    await createKbMutation.mutateAsync(selectedItems as string[], {
+    createKbMutation.mutate(selectedItems as string[], {
       onError: (error) => {
         toast({
           title: 'Error creating knowledge base',

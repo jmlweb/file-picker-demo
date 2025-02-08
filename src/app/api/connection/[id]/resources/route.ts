@@ -1,12 +1,15 @@
 import { backendURL, TOKEN_COOKIE } from '@/config/server';
 import { NextRequest } from 'next/server';
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   const token = request.cookies.get(TOKEN_COOKIE)?.value;
   if (!token) {
     return new Response('Unauthorized', { status: 401 });
   }
-  const connectionId =  (await params).id;
+  const connectionId = (await params).id;
   const parentId = request.nextUrl.searchParams.get('parent_id');
   const url = new URL(
     `${backendURL}/connections/${connectionId}/resources/children`,
