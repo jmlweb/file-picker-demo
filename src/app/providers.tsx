@@ -1,15 +1,13 @@
 'use client';
 
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import {
+  QueryCache,
   QueryClient,
   QueryClientProvider,
-  QueryCache,
   isServer,
 } from '@tanstack/react-query';
-import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { ReactNode } from 'react';
-import { TooltipProvider } from '@/components/ui/tooltip';
 
 function createQueryClient() {
   const queryClient = new QueryClient({
@@ -33,20 +31,6 @@ function createQueryClient() {
       },
     }),
   });
-
-  // Only run persister in browser environment
-  if (!isServer) {
-    const persister = createSyncStoragePersister({
-      storage: window.sessionStorage,
-    });
-
-    persistQueryClient({
-      queryClient,
-      persister,
-      maxAge: 1 * 1000 * 60 * 60, // 1 hour
-      buster: process.env.NEXT_PUBLIC_APP_VERSION, // Optional cache buster
-    });
-  }
 
   return queryClient;
 }

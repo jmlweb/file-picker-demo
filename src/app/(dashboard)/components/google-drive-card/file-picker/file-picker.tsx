@@ -53,10 +53,12 @@ export default function FilePicker({
         onSuccess: (kbData) => {
           refreshKbsQuery(kbData);
           const kbId = kbData.knowledge_base_id;
-          prefetchKbResourcesQuery(kbId);
           setSelectedKb(kbId);
           setIsOpen(false);
           syncKbMutation.mutate(kbId, {
+            onSuccess: () => {
+              prefetchKbResourcesQuery(kbId);
+            },
             onError: (error) => {
               toast({
                 title: 'Error syncing knowledge base',

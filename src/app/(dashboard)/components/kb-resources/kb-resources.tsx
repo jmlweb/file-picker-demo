@@ -18,6 +18,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import clsx from 'clsx';
+import Syncing from './syncing';
 
 export default function KbResources({ kbId }: { kbId: string }) {
   const { data, error } = useKbResourcesQuery(kbId);
@@ -30,8 +31,13 @@ export default function KbResources({ kbId }: { kbId: string }) {
       </Alert>
     );
   }
-  if (!data) {
-    return <div>Loading...</div>;
+  if (!data || data.length === 0) {
+    return (
+      <>
+        <div>Loading...</div>
+        {data && data.length > 0 && <Syncing kbId={kbId} />}
+      </>
+    );
   }
   return (
     <Table>
