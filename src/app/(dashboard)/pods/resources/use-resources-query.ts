@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { resourcesSchema } from './schemas';
 import useConnectionQuery from '../connection/use-connection-query';
+import { resourcesSchema } from './schemas';
 
 const fetchResources = async (connectionId: string, parentId?: string) => {
   const url = new URL(

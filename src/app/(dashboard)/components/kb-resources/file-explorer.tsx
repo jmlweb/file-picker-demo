@@ -1,14 +1,19 @@
-import useKbResourcesQuery from '../../pods/kb/use-kb-resources-query';
-import SkeletonItems from './skeleton-items';
-import * as BaseItem from './base-item';
-import { Resource } from '../../pods/resources/schemas';
-import Image from 'next/image';
-import { useCallback, useRef, useState } from 'react';
-import clsx from 'clsx';
-import { ChevronRight, Folder, FolderOpen, Trash2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
+import clsx from 'clsx';
+import {
+  ChevronRight,
+  FileIcon,
+  Folder,
+  FolderOpen,
+  Trash2,
+} from 'lucide-react';
+import { useCallback, useRef, useState } from 'react';
 import useDeleteResourceMutation from '../../pods/kb/use-delete-resource-mutation';
+import useKbResourcesQuery from '../../pods/kb/use-kb-resources-query';
+import { Resource } from '../../pods/resources/schemas';
+import * as BaseItem from './base-item';
+import SkeletonItems from './skeleton-items';
 
 function DirectoryItem({
   level,
@@ -64,14 +69,6 @@ function DirectoryItem({
   );
 }
 
-const getResourceIcon = (fileName: string) => {
-  const extension = fileName?.split('.').pop();
-  if (extension) {
-    return ['mp4'].includes(extension) ? 'video' : extension;
-  }
-  return 'file';
-};
-
 function FileItem({
   level,
   resource,
@@ -85,13 +82,7 @@ function FileItem({
     <>
       <BaseItem.Root>
         <BaseItem.Separator level={level} isFolder={false} />
-        <Image
-          alt="pdf"
-          width="18"
-          height="18"
-          className={BaseItem.iconBaseClasses}
-          src={`/file-types/${getResourceIcon(resource.inode_path.path)}.svg`}
-        />
+        <FileIcon path={resource.inode_path.path} />
         <BaseItem.Name>{resource.inode_path.path}</BaseItem.Name>
         <BaseItem.Size>{resource.size}</BaseItem.Size>
         <BaseItem.Status>{resource.status}</BaseItem.Status>

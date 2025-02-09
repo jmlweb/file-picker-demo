@@ -2,14 +2,14 @@ import { cva } from 'class-variance-authority';
 import { ReactNode } from 'react';
 
 import { formatFileSize } from '@/app/(dashboard)/pods/resources/utils';
-import { type VariantProps } from 'class-variance-authority';
-import { Check } from 'lucide-react';
-import clsx from 'clsx';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { type VariantProps } from 'class-variance-authority';
+import clsx from 'clsx';
+import { Check } from 'lucide-react';
 
 export const iconBaseClasses = 'h-[18px] min-h-[18px] w-[18px] min-w-[18px]';
 

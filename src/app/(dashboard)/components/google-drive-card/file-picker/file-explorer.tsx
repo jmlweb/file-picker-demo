@@ -1,9 +1,7 @@
 import { Resource } from '@/app/(dashboard)/pods/resources/schemas';
 import useResourcesQuery from '@/app/(dashboard)/pods/resources/use-resources-query';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import clsx from 'clsx';
-import { AlertCircle, ChevronRight, Folder, FolderOpen } from 'lucide-react';
-import Image from 'next/image';
+import { ChevronRight, FileIcon, Folder, FolderOpen } from 'lucide-react';
 import {
   ComponentPropsWithoutRef,
   memo,
@@ -13,18 +11,11 @@ import {
   useRef,
   useState,
 } from 'react';
+import { AlertError } from '../../alert-error/alert-error';
 import * as BaseItem from './base-item';
 import SkeletonItems from './skeleton-items';
 import { useFilePickerStore } from './store';
 import useSubscription from './use-subscription';
-
-const getResourceIcon = (fileName: string) => {
-  const extension = fileName?.split('.').pop();
-  if (extension) {
-    return ['mp4'].includes(extension) ? 'video' : extension;
-  }
-  return 'file';
-};
 
 function FileItem({
   level,
@@ -50,13 +41,7 @@ function FileItem({
           }}
         />
         <BaseItem.Separator level={level} isFolder={false} />
-        <Image
-          alt="pdf"
-          width="18"
-          height="18"
-          className={BaseItem.iconBaseClasses}
-          src={`/file-types/${getResourceIcon(resource.inode_path.path)}.svg`}
-        />
+        <FileIcon path={resource.inode_path.path} />
         <BaseItem.Name>{resource.inode_path.path}</BaseItem.Name>
         <BaseItem.Size>{resource.size}</BaseItem.Size>
       </BaseItem.Root>
@@ -172,13 +157,7 @@ function Resources({
   }
 
   if (error) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error.message}</AlertDescription>
-      </Alert>
-    );
+    return <AlertError message={error.message} />;
   }
 
   if (!data) {

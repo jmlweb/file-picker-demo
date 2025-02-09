@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { resourcesSchema } from '../resources/schemas';
 import { useCallback } from 'react';
+import { resourcesSchema } from '../resources/schemas';
 
 const kbResourcesSchema = z
   .object({

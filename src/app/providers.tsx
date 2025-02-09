@@ -1,15 +1,15 @@
 'use client';
 
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import {
+  QueryCache,
   QueryClient,
   QueryClientProvider,
-  QueryCache,
   isServer,
 } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { ReactNode } from 'react';
-import { TooltipProvider } from '@/components/ui/tooltip';
 
 function createQueryClient() {
   const queryClient = new QueryClient({

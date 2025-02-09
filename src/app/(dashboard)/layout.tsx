@@ -2,9 +2,9 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
+import { TOKEN_COOKIE } from '@/config/server';
 import { LogOut } from 'lucide-react';
 import { logoutAction } from '../logoutAction';
-import { TOKEN_COOKIE } from '@/config/server';
 import UserAvatar from './pods/profile/user-avatar';
 
 export default async function AuthLayout({

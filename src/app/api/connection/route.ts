@@ -1,5 +1,5 @@
-import { NextRequest } from 'next/server';
 import { backendURL, TOKEN_COOKIE } from '@/config/server';
+import { NextRequest } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const token = request.cookies.get(TOKEN_COOKIE)?.value;

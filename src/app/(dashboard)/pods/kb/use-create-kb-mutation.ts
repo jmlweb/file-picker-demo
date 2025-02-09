@@ -1,5 +1,5 @@
-import useConnectionQuery from '../connection/use-connection-query';
 import { useMutation } from '@tanstack/react-query';
+import useConnectionQuery from '../connection/use-connection-query';
 import { kbSchema, KbSchema } from './schemas';
 
 type Payload = {

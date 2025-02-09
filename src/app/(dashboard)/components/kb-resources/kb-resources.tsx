@@ -1,20 +1,13 @@
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertCircle } from 'lucide-react';
 import useKbResourcesQuery from '../../pods/kb/use-kb-resources-query';
 
-import Syncing from './syncing';
+import { AlertError } from '../alert-error/alert-error';
 import FileExplorer from './file-explorer';
+import Syncing from './syncing';
 
 export default function KbResources({ kbId }: { kbId: string }) {
   const { data, error } = useKbResourcesQuery(kbId);
   if (error) {
-    return (
-      <Alert variant="destructive">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error.message}</AlertDescription>
-      </Alert>
-    );
+    return <AlertError message={error.message} />;
   }
   return (
     <>
