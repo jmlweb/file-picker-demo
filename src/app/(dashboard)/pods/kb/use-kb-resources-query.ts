@@ -8,12 +8,14 @@ const kbResourcesSchema = z
   .object({
     data: resourcesSchema,
   })
-  .transform(({ data }) =>
-    data.filter((resource) => resource.inode_type === 'file'),
-  );
+  .transform(({ data }) => data);
 
-const fetchKbResources = async (kbId: string) => {
-  const res = await fetch(`/api/kb/${kbId}/resources`);
+export type KbResources = z.infer<typeof kbResourcesSchema>;
+
+const fetchKbResources = async (kbId: string, parentPath: string) => {
+  const res = await fetch(
+    `/api/kb/${kbId}/resources?resource_path=${parentPath}`,
+  );
   if (!res.ok) {
     throw new Error(res.statusText);
   }
@@ -21,20 +23,20 @@ const fetchKbResources = async (kbId: string) => {
   return kbResourcesSchema.parse(data);
 };
 
-export default function useKbResourcesQuery(kbId: string) {
+export default function useKbResourcesQuery(kbId: string, parentPath = '/') {
   return useQuery({
-    queryKey: ['kb-resources', kbId],
-    queryFn: () => fetchKbResources(kbId),
+    queryKey: ['kb-resources', kbId, parentPath],
+    queryFn: () => fetchKbResources(kbId, parentPath),
   });
 }
 
 export function usePrefetchKbResourcesQuery() {
   const queryClient = useQueryClient();
   return useCallback(
-    (kbId: string) => {
+    (kbId: string, parentPath = '/') => {
       queryClient.prefetchQuery({
-        queryKey: ['kb-resources', kbId],
-        queryFn: () => fetchKbResources(kbId),
+        queryKey: ['kb-resources', kbId, parentPath],
+        queryFn: () => fetchKbResources(kbId, parentPath),
       });
     },
     [queryClient],

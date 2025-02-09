@@ -39,7 +39,7 @@ function Header() {
               className="group-hover/checkbox:opacity-100 group-active/checkbox:scale-90"
             />
           </span>
-          <div className="w-4.5"></div>
+          <div className="w-[18px]"></div>
           <p>Name</p>
         </div>
         <p className="w-20">Size</p>
